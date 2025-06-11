@@ -155,7 +155,10 @@ def view_member(member_id):
         Relationship.user_id == user_id
     ).all()
 
-    parents = []
+    mothers = [] # List to store mother members and their relationship IDs
+    fathers = [] # List to store father members and their relationship IDs
+    siblings = [] # List to store sibling members and their relationship IDs
+    parents_of_member = [] # List to temporarily store the current member's parents
     children = []
     spouses = []
 
