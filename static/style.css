@@ -1,0 +1,29 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+.family-member-node {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 2px 2px 5px #888888;
+    display: inline-block; /* Or block depending on layout */
+}
+
+.family-member-node img {
+    width: 80px; /* Adjust size as needed */
+    height: 80px; /* Adjust size as needed */
+    border-radius: 50%;
+    object-fit: cover; /* To ensure the image covers the circular area */
+    margin-bottom: 5px;
+}
+
+.member-name {
+    font-weight: bold;
+}
