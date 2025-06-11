@@ -41,3 +41,62 @@
 
 </body>
 </html>
+<!-- START New view_member.html Content -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Family Member Details - {{ family_member.name }}</title>
+ <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+ <h1>{{ family_member.name }}</h1>
+
+ <div class="family-tree-viz">
+ <div class="parents">
+ {% if parents %}
+ {% for parent in parents %}
+ <div class="family-member-node">
+ <a href="{{ url_for('view_member', member_id=parent.id) }}">{{ parent.name }}</a>
+ </div>
+ {% endfor %}
+ {% else %}
+ <p>No parents added yet.</p>
+ {% endif %}
+ </div>
+
+ <div class="current-member">
+ <div class="family-member-node">
+ <h2>{{ family_member.name }}</h2>
+ <p>DOB: {{ family_member.dob }}</p>
+ <p>Location: {{ family_member.location }}</p>
+ <p>Gender: {{ family_member.gender }}</p>
+ <p><a href="{{ url_for('edit_member', member_id=family_member.id) }}">Edit Member</a></p>
+ <form method="POST" action="{{ url_for('delete_member', member_id=family_member.id) }}" onsubmit="return confirm('Are you sure you want to delete this member?');">
+ <button type="submit">Delete Member</button>
+ </form>
+ </div>
+ </div>
+
+ <div class="children">
+ {% if children %}
+ {% for child in children %}
+ <div class="family-member-node">
+ <a href="{{ url_for('view_member', member_id=child.id) }}">{{ child.name }}</a>
+ </div>
+ {% endfor %}
+ {% else %}
+ <p>No children added yet.</p>
+ {% endif %}
+ </div>
+
+ <!-- Add a section for spouses here if needed -->
+
+ </div>
+
+ <p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+
+</body>
+</html>
+<!-- END New view_member.html Content -->
