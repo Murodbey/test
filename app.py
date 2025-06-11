@@ -284,10 +284,14 @@ def add_relationship():
         print(f"Relationship type received: {relationship_type}")
 
         new_relationship = Relationship(user_id=user_id, member1_id=member1_id, member2_id=member2_id, relationship_type=relationship_type)
-        
         db.session.add(new_relationship)
         print("DEBUG: Relationship added to session")
-        db.session.commit()
+        try:
+            db.session.commit()
+            print("DEBUG: Database session committed")
+        except Exception as e:
+            print(f"DEBUG: Error during database commit: {e}")
+            db.session.rollback()
 
         return redirect(url_for('dashboard'))
     else:
