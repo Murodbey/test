@@ -13,7 +13,7 @@
  <div class="family-tree-viz">
  <div class="mothers">
  {% if mothers %}
- <h3>Mothers</h3>
+ <h3>Mother</h3>
  {% for mother in mothers %} 
  <div class="family-member-node"> 
  <a href="{{ url_for('view_member', member_id=mother.member.id) }}">{{ mother.member.name }}</a>
