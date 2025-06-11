@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, abort
 from flask import jsonify # Import jsonify
-from sqlalchemy import or_
+from sqlalchemy import or_, inspect
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 import os
@@ -8,7 +8,6 @@ import os
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
-from werkzeug.security import generate_password_hash, check_password_hash
 
 app.config['SECRET_KEY'] = 'your_secret_key_here'  # Replace with a real secret key
 
@@ -16,6 +15,7 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
+from werkzeug.security import generate_password_hash, check_password_hash
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
