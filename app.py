@@ -156,7 +156,9 @@ def view_member(member_id):
     ).all()
 
     mothers = [] # List to store mother members and their relationship IDs
-    fathers = [] # List to store father members and their relationship IDs
+    fathers = [] # List to store father members and their relationship IDs    
+    parents_of_member = [] # List to temporarily store the current member's parents
+
     siblings = [] # List to store sibling members and their relationship IDs
     parents_of_member = [] # List to temporarily store the current member's parents
     children = []
@@ -175,7 +177,7 @@ def view_member(member_id):
         elif relationship.member2_id == member_id:
             other_member = FamilyMember.query.get(relationship.member1_id)
             if other_member:
-                if relationship.relationship_type.lower() == 'parent':
+                if relationship.relationship_type.lower() == 'parent': # Assuming 'parent' relationship type
                     parents.append({'member': other_member, 'relationship_id': relationship.id})
                 elif relationship.relationship_type == 'spouse':
                     spouses.append({'member': other_member, 'relationship_id': relationship.id})

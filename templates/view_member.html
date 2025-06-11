@@ -122,7 +122,7 @@
  <div class="mothers">
  {% if mothers %}
  <h3>Mothers</h3>
- {% for mother in mothers %}
+ {% for mother in mothers %} 
  <div class="family-member-node"> 
  <a href="{{ url_for('view_member', member_id=mother.member.id) }}">{{ mother.member.name }}</a>
  </div>
@@ -134,7 +134,7 @@
 
  <div class="fathers">
  {% if fathers %}
- <h3>Fathers</h3>
+ <h3>Father</h3>
  {% for father in fathers %}
  <div class="family-member-node">
  <a href="{{ url_for('view_member', member_id=father.member.id) }}">{{ father.member.name }}</a>
