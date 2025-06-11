@@ -171,7 +171,25 @@ def delete_member(member_id):
     else:
         # Optionally, handle other request methods or return an error
         abort(405) # Method Not Allowed
+
 @app.route('/add_relationship', methods=['GET', 'POST'])
+def add_relationship():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    user_id = session.get('user_id')
+
+    family_members = FamilyMember.query.filter_by(user_id=user_id).all()
+
+    if request.method == 'POST':
+        member1_id = int(request.form['member1_id'])
+        member2_id = int(request.form['member2_id'])
+        relationship_type = request.form['relationship_type']
+
+        new_relationship = Relationship(user_id=user_id, member1_id=member1_id, member2_id=member2_id, relationship_type=relationship_type)
+        db.session.add(new_relationship)
+        db.session.commit()
+
         return redirect(url_for('index'))
 
     user_id = session.get('user_id')
