@@ -92,8 +92,8 @@
  <div class="parents">
  {% if parents %}
  {% for parent in parents %}
- <div class="family-member-node">
- <a href="{{ url_for('view_member', member_id=parent.id) }}">{{ parent.name }}</a>
+ <div class="family-member-node"> 
+ <a href="{{ url_for('view_member', member_id=parent.member.id) }}">{{ parent.member.name }}</a>
  </div>
  {% endfor %}
  {% else %}
@@ -121,8 +121,8 @@
  <div class="children">
  {% if children %}
  {% for child in children %}
- <div class="family-member-node">
- <a href="{{ url_for('view_member', member_id=child.id) }}">{{ child.name }}</a>
+ <div class="family-member-node"> 
+ <a href="{{ url_for('view_member', member_id=child.member.id) }}">{{ child.member.name }}</a>
  </div>
  {% endfor %}
  {% else %}
