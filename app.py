@@ -58,5 +58,9 @@ def login():
         return redirect(url_for('index'))
 
 
+@app.route('/dashboard')
+def dashboard():
+    return "Dashboard"
+
 if __name__ == '__main__':
     app.run(debug=True)
