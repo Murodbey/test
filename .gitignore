@@ -11,4 +11,8 @@ venv/
 database.db
 
 # Uploaded files (create this directory later for photos)
+<<<<<<< HEAD
 uploads/
+=======
+uploads/
+>>>>>>> c421663cfdfd6274006c2b796ffcdf2a3d156cf1
