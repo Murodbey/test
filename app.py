@@ -6,13 +6,13 @@ import os
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
+app.config['SECRET_KEY'] = 'your_secret_key_here'  # Replace with a real secret key
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-app.config['SECRET_KEY'] = 'your_secret_key_here'  # Replace with a real secret key
-
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
+
 
     def __repr__(self):
         return '<User %r>' % self.username
