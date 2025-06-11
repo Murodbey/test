@@ -8,6 +8,11 @@
 <body>
     <h1>Welcome to Your Family Tree</h1>
 
+    <form action="{{ url_for('search') }}" method="GET">
+        <input type="text" name="search_query" placeholder="Search for a family member...">
+        <button type="submit">Search</button>
+    </form>
+
     <p class="dashboard-links">
         <a href="{{ url_for('add_member') }}">Add New Family Member</a> | <a href="{{ url_for('add_relationship') }}">Add New Relationship</a>
     </p>

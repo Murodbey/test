@@ -23,7 +23,7 @@ class FamilyMember(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
-    photo = db.Column(db.String(200)) # Store path to photo
+ photo = db.Column(db.String(200)) # Store path to photo
     dob = db.Column(db.String(20))
     dod = db.Column(db.String(20))
     location = db.Column(db.String(100))
@@ -91,9 +91,13 @@ def add_member():
         date_of_birth = request.form['date_of_birth']
         place_of_birth = request.form['place_of_birth']
         gender = request.form['gender']
+        photo = request.form.get('photo') # Use .get() for optional fields
+        date_of_death = request.form.get('date_of_death') # Use .get() for optional fields
 
-        new_member = FamilyMember(user_id=user_id, name=full_name, dob=date_of_birth, location=place_of_birth, gender=gender)
+ new_member = FamilyMember(user_id=user_id, name=full_name, dob=date_of_birth, location=place_of_birth, gender=gender, photo=photo, dod=date_of_death)
         db.session.add(new_member)
+
+
         db.session.commit()
 
         return redirect(url_for('dashboard'))
@@ -147,6 +151,8 @@ def edit_member(member_id):
         family_member.dob = request.form['date_of_birth']
         family_member.location = request.form['place_of_birth']
         family_member.gender = request.form['gender']
+ family_member.photo = request.form.get('photo') # Use .get() for optional fields
+ family_member.dod = request.form.get('date_of_death') # Use .get() for optional fields
 
         db.session.commit()
 
@@ -193,6 +199,48 @@ def add_relationship():
         return redirect(url_for('dashboard'))
     else:
         return render_template('add_relationship.html', family_members=family_members)
+
+
+@app.route('/edit_relationship/<int:relationship_id>', methods=['GET'])
+def edit_relationship(relationship_id):
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    user_id = session.get('user_id')
+    relationship = Relationship.query.filter_by(id=relationship_id, user_id=user_id).first_or_404()
+
+    family_members = FamilyMember.query.filter_by(user_id=user_id).all()
+
+    return render_template('edit_relationship.html', relationship=relationship, family_members=family_members)
+
+@app.route('/edit_relationship/<int:relationship_id>', methods=['POST'])
+def update_relationship(relationship_id):
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    user_id = session.get('user_id')
+    relationship = Relationship.query.filter_by(id=relationship_id, user_id=user_id).first_or_404()
+
+    relationship.member1_id = int(request.form['member1_id'])
+    relationship.member2_id = int(request.form['member2_id'])
+    relationship.relationship_type = request.form['relationship_type']
+
+    db.session.commit()
+
+    return redirect(url_for('view_member', member_id=relationship.member1_id))
+
+@app.route('/delete_relationship/<int:relationship_id>', methods=['POST'])
+def delete_relationship(relationship_id):
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    user_id = session.get('user_id')
+    relationship = Relationship.query.filter_by(id=relationship_id, user_id=user_id).first_or_404()
+
+    db.session.delete(relationship)
+    db.session.commit()
+
+    return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
     app.run(debug=True)

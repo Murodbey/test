@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Relationship</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Edit Relationship</h1>
+
+    <form method="POST" action="{{ url_for('edit_relationship', relationship_id=relationship.id) }}">
+        <div>
+            <label for="member1">Member 1:</label>
+            <select name="member1_id" id="member1" required>
+                {% for member in family_members %}
+                    <option value="{{ member.id }}" {% if member.id == relationship.member1_id %}selected{% endif %}>{{ member.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <br>
+        <div>
+            <label for="relationship_type">Relationship Type:</label>
+            <input type="text" id="relationship_type" name="relationship_type" value="{{ relationship.relationship_type }}" required>
+        </div>
+        <br>
+        <div>
+            <label for="member2">Member 2:</label>
+            <select name="member2_id" id="member2" required>
+                {% for member in family_members %}
+                    <option value="{{ member.id }}" {% if member.id == relationship.member2_id %}selected{% endif %}>{{ member.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <br>
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <p><a href="{{ url_for('view_member', member_id=relationship.member1_id) }}">Back to Member Details</a></p>
+
+</body>
+</html>
