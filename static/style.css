@@ -54,9 +54,7 @@ body {
     position: relative; /* Needed for absolute positioning of pseudo-elements */
     margin-top: 20px;
 }
-
-.parents,
-.children,
+/* Basic flex layout for tree sections */
 .spouses {
     display: flex; /* Use flexbox for layout */
     justify-content: center; /* Center the items */
@@ -68,11 +66,10 @@ body {
 }
 
 /* Refined vertical lines for parent-child connections */
-.parents::after {
+ .parents::after {
     content: '';
     position: absolute;
-    bottom: -20px; /* Adjust to position the line correctly */
- bottom: -10px; /* Adjust to position the line correctly */
+ bottom: -10px; /* Position the line below the parents row */
     transform: translateX(-50%);
     width: 2px;
     height: 20px;
@@ -84,7 +81,7 @@ body {
     position: relative; /* Needed for pseudo-elements */
 }
 
-.current-member::after {
+ .current-member::after {
     content: '';
     position: absolute;
  bottom: -10px; /* Adjust to position the line correctly */
@@ -97,7 +94,7 @@ body {
 
 /* Horizontal line for spouse connections */
 .spouses {
-    align-items: center; /* Align vertically */
+ align-items: flex-start; /* Align items at the start to position line correctly */
     margin-bottom: 20px;
 }
 
@@ -107,16 +104,57 @@ body {
 
 .spouses .family-member-node + .family-member-node::before {
     content: '';
-    position: absolute;
-    left: -10px; /* Position the line between nodes */
+ position: absolute;
+ left: -10px; /* Position the line between nodes, accounting for margin */
     top: 50%;
     transform: translateY(-50%);
-    width: 20px; /* Length of the horizontal line - increased to account for margin */
+ width: 20px; /* Length of the horizontal line */
     height: 2px;
     background-color: #333;
 }
 
 .children {
+    margin-top: 30px; /* Space between sections */
+}
+
+/* Dashboard Tree Styles */
+.dashboard-tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+}
+
+.parents-row,
+.user-siblings-spouses-row,
+.children-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px; /* Space between rows */
+    position: relative; /* Needed for positioning lines */
+}
+
+.user-siblings-spouses-row {
+    align-items: flex-start; /* Align items at the top */
+}
+
+.user-node {
+    margin: 0 10px; /* Space around the central user node */
+}
+
+.siblings-row,
+.spouses-row {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align items at the top */
+}
+
+.siblings-row .family-member-node,
+.spouses-row .family-member-node {
+    margin: 0 8px; /* Adjust margin for closer spacing */
+}
+
+.children-row {
     margin-top: 20px; /* Space between sections */
 }
  
@@ -199,5 +237,4 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #0056b3;
 }
