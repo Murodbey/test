@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, abort
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, inspect
 from sqlalchemy import or_
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -12,6 +12,7 @@ db = SQLAlchemy(app)
 app.config['SECRET_KEY'] = 'your_secret_key_here'  # Replace with a real secret key
 
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
 def allowed_file(filename):
@@ -52,6 +53,15 @@ class Relationship(db.Model):
     user = db.relationship('User', backref=db.backref('relationships', lazy=True))
 
     def __repr__(self):
+        return f'<Relationship {self.member1_id} - {self.relationship_type} - {self.member2_id}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'member1_id': self.member1_id,
+            'member2_id': self.member2_id,
+            'relationship_type': self.relationship_type,
         return f'<Relationship {self.member1_id} - {self.relationship_type} - {self.member2_id}>'
 
 
@@ -133,10 +143,20 @@ def dashboard():
     # Fetch all family members and relationships for the logged-in user
     family_members = FamilyMember.query.filter_by(user_id=user_id).all()
     relationships = Relationship.query.filter_by(user_id=user_id).all()
+    
+    # Convert SQLAlchemy objects to dictionaries for JSON serialization
+    family_members_data = [{
+        'id': member.id,
+        'name': member.name,
+        'photo': member.photo,
+        'dob': member.dob,
+        'dod': member.dod,
+        'location': member.location,
+        'gender': member.gender
+    } for member in family_members]
+    relationships_data = [relationship.to_dict() for relationship in relationships]
 
-    return render_template('dashboard.html', family_members=family_members, relationships=relationships)
-
-
+    return jsonify(family_members=family_members_data, relationships=relationships_data)
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
