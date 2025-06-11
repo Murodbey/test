@@ -185,7 +185,8 @@ def view_member(member_id):
                     spouses.append({'member': other_member, 'relationship_id': relationship.id})
                 # Add other relationship types as needed
 
-    return render_template('view_member.html', family_member=family_member, relationships=relationships, parents=parents, children=children, spouses=spouses)
+    return render_template('view_member.html', family_member=family_member, relationships=relationships, mothers=mothers, fathers=fathers, children=children, spouses=spouses, siblings=siblings)
+
 
 @app.route('/profile', methods=['GET'])
 def profile():
