@@ -67,6 +67,16 @@ body {
     justify-content: center;
     align-items: flex-start;
     margin-bottom: 30px; /* Increase space for line */
+    /* Add styles for .mothers and .fathers here */
+}
+
+.mothers,
+.fathers {
+    display: flex;
+    flex-direction: column;
+}
+.fathers {
+    margin-right: 40px; /* Add space between Father and Mother sections */
 }
 
 /* Refined vertical lines for parent-child connections */
