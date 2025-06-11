@@ -186,7 +186,8 @@ def view_member(member_id):
                 elif relationship.relationship_type.lower() == 'spouse':
                     spouses.append({'member': other_member, 'relationship_id': relationship.id})
                 # Add other relationship types as needed
- print(f"DEBUG: Data being sent to template - Mothers: {mothers}, Fathers: {fathers}, Children: {children}, Spouses: {spouses}, Siblings: {siblings}")
+
+    print(f"DEBUG: Data being sent to template - Mothers: {mothers}, Fathers: {fathers}, Children: {children}, Spouses: {spouses}, Siblings: {siblings}")
     return render_template('view_member.html', family_member=family_member, relationships=relationships, mothers=mothers, fathers=fathers, children=children, spouses=spouses, siblings=siblings)
 
 
