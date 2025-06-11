@@ -171,8 +171,7 @@ def delete_member(member_id):
     else:
         # Optionally, handle other request methods or return an error
         abort(405) # Method Not Allowed
-@app.route('/add_relationship')
-def add_relationship():
+@app.route('/add_relationship', methods=['GET', 'POST'])
     if 'user_id' not in session:
         return redirect(url_for('index'))
 
