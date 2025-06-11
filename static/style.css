@@ -11,7 +11,7 @@ body {
     padding: 10px;
     margin: 10px;
     text-align: center;
-    background-color: #fff;
+    background-color: #fff; 
     box-shadow: 2px 2px 5px #888888;
     display: inline-block; /* Or block depending on layout */
 }
@@ -31,7 +31,7 @@ body {
 /* Styling for the family members list on the dashboard */
 #dashboard-members-list {
     list-style: none; /* Remove default bullets */
- display: grid; /* Enable CSS Grid */
+    display: grid; /* Enable CSS Grid */
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Create a responsive grid */
     gap: 20px; /* Add space between flex items */
     padding: 0; /* Remove default padding */
@@ -47,32 +47,104 @@ body {
     text-align: center; /* Center the content */
 }
 
-}
-
 .family-tree-viz {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative; /* Needed for absolute positioning of pseudo-elements */
     margin-top: 20px;
 }
 
 .parents,
-.children {
- position: relative; /* Needed for pseudo-elements */
+.children,
+.spouses {
+    display: flex; /* Use flexbox for layout */
+    justify-content: center; /* Center the items */
+    position: relative; /* Needed for pseudo-elements */
 }
 
 .parents {
- border-bottom: 2px solid #333; /* Simple line from parents section */
- padding-bottom: 20px; /* Space for the border/line */
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px; /* Space between sections */
+    margin-bottom: 30px; /* Increase space for line */
+}
+
+/* Refined vertical lines for parent-child connections */
+.parents::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; /* Adjust to position the line correctly */
+ bottom: -10px; /* Adjust to position the line correctly */
+    transform: translateX(-50%);
+    width: 2px;
+    height: 20px;
+    background-color: #333;
 }
 
 .current-member {
-    margin-bottom: 20px; /* Space between sections */
+    margin-bottom: 30px; /* Increase space for line */
+    position: relative; /* Needed for pseudo-elements */
 }
 
+.current-member::after {
+    content: '';
+    position: absolute;
+ bottom: -10px; /* Adjust to position the line correctly */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 20px;
+    background-color: #333;
+}
+
+/* Horizontal line for spouse connections */
+.spouses {
+    align-items: center; /* Align vertically */
+    margin-bottom: 20px;
+}
+
+.spouses .family-member-node {
+    position: relative; /* Needed for pseudo-elements on nodes */
+}
+
+.spouses .family-member-node + .family-member-node::before {
+    content: '';
+    position: absolute;
+    left: -10px; /* Position the line between nodes */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px; /* Length of the horizontal line - increased to account for margin */
+    height: 2px;
+    background-color: #333;
+}
+
+.children {
+    margin-top: 20px; /* Space between sections */
+}
+ 
+
+/* Styles for profile and edit profile pages */
+.profile-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.profile-container p {
+    margin-bottom: 10px;
+}
+
+.profile-container form {
+    margin-top: 20px;
+}
+
+.profile-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
 
 h1 {
     color: #333;
@@ -102,4 +174,30 @@ h2 {
 
 .dashboard-links a:hover {
     text-decoration: underline;
+}
+
+/* Styles for form inputs and buttons */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
 }

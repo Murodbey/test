@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, session, a
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from werkzeug.security import generate_password_hash, check_password_hash
-import os, sqlalchemy
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -11,9 +12,18 @@ db = SQLAlchemy(app)
 app.config['SECRET_KEY'] = 'your_secret_key_here'  # Replace with a real secret key
 
 class User(db.Model):
+
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=True)
 
 
     def __repr__(self):
@@ -91,12 +101,22 @@ def add_member():
         date_of_birth = request.form['date_of_birth']
         place_of_birth = request.form['place_of_birth']
         gender = request.form['gender']
-        photo = request.form.get('photo') # Use .get() for optional fields
+        photo_path = None # Initialize photo_path to None
+
+        if 'photo' in request.files:
+            file = request.files['photo']
+            if file.filename != '' and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                upload_folder_path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+                os.makedirs(upload_folder_path, exist_ok=True) # Create upload folder if it doesn't exist
+                file_path = os.path.join(upload_folder_path, filename)
+                file.save(file_path)
+                photo_path = os.path.join('/', app.config['UPLOAD_FOLDER'], filename) # Store path relative to static
+
         date_of_death = request.form.get('dod') # Use .get() for optional fields
 
-        new_member = FamilyMember(user_id=user_id, name=full_name, dob=date_of_birth, location=place_of_birth, gender=gender, photo=photo, dod=date_of_death)
+        new_member = FamilyMember(user_id=user_id, name=full_name, dob=date_of_birth, location=place_of_birth, gender=gender, photo=photo_path, dod=date_of_death)
         db.session.add(new_member)
-
 
         db.session.commit()
 
@@ -134,9 +154,71 @@ def view_member(member_id):
     children = []
     spouses = []
 
-    # Logic to populate parents, children, and spouses lists based on relationships will go here
+    # Populate parents, children, and spouses lists based on relationships
+    for relationship in relationships:
+        if relationship.member1_id == member_id:
+            other_member = FamilyMember.query.get(relationship.member2_id)
+            if other_member:
+                if relationship.relationship_type == 'parent-child':
+                    children.append(other_member)
+                elif relationship.relationship_type == 'spouse':
+                    spouses.append(other_member)
+                # Add other relationship types as needed
+        elif relationship.member2_id == member_id:
+            other_member = FamilyMember.query.get(relationship.member1_id)
+            if other_member:
+                if relationship.relationship_type == 'parent-child':
+                    parents.append(other_member)
+                elif relationship.relationship_type == 'spouse':
+                    spouses.append(other_member)
+                # Add other relationship types as needed
 
     return render_template('view_member.html', family_member=family_member, relationships=relationships, parents=parents, children=children, spouses=spouses)
+
+@app.route('/profile', methods=['GET'])
+def profile():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    user_id = session.get('user_id')
+    user = User.query.get(user_id)
+
+    if user:
+        return render_template('profile.html', user=user)
+    else:
+        # This case ideally shouldn't happen if session['user_id'] is set correctly
+        return redirect(url_for('dashboard'))
+
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
+def edit_profile():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    user_id = session.get('user_id')
+    user = User.query.get(user_id)
+
+    if user:
+        if request.method == 'POST':
+            user.username = request.form['username']
+            user.email = request.form.get('email') # Use .get() for optional fields
+
+            db.session.commit()
+
+            return redirect(url_for('profile'))
+        else:
+            return render_template('edit_profile.html', user=user)
+    else:
+        # This case ideally shouldn't happen if session['user_id'] is set correctly
+        return redirect(url_for('dashboard'))
+
+
+
+
+
+
+
+
 @app.route('/edit_member/<int:member_id>')
 def edit_member(member_id):
     if 'user_id' not in session:
