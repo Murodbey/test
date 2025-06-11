@@ -22,14 +22,14 @@ class User(db.Model):
 class FamilyMember(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
- photo = db.Column(db.String(200)) # Store path to photo
-    dob = db.Column(db.String(20))
-    dod = db.Column(db.String(20))
-    location = db.Column(db.String(100))
+    name = db.Column(db.String(100), nullable=False)    
+    photo = db.Column(db.String(200)) # Store path to photo
+    dob = db.Column(db.String(20))    
+    dod = db.Column(db.String(20))    
+    location = db.Column(db.String(100))    
     gender = db.Column(db.String(20), nullable=True)
 
-    user = db.relationship('User', backref=db.backref('family_members', lazy=True))
+    user = db.relationship('User', backref=db.backref('family_members', lazy=True))    
     relationships_as_member1 = db.relationship('Relationship', foreign_keys='Relationship.member1_id', backref='member1', lazy='dynamic')
     relationships_as_member2 = db.relationship('Relationship', foreign_keys='Relationship.member2_id', backref='member2', lazy='dynamic')
 
@@ -92,9 +92,9 @@ def add_member():
         place_of_birth = request.form['place_of_birth']
         gender = request.form['gender']
         photo = request.form.get('photo') # Use .get() for optional fields
-        date_of_death = request.form.get('date_of_death') # Use .get() for optional fields
+        date_of_death = request.form.get('dod') # Use .get() for optional fields
 
- new_member = FamilyMember(user_id=user_id, name=full_name, dob=date_of_birth, location=place_of_birth, gender=gender, photo=photo, dod=date_of_death)
+        new_member = FamilyMember(user_id=user_id, name=full_name, dob=date_of_birth, location=place_of_birth, gender=gender, photo=photo, dod=date_of_death)
         db.session.add(new_member)
 
 
@@ -151,8 +151,8 @@ def edit_member(member_id):
         family_member.dob = request.form['date_of_birth']
         family_member.location = request.form['place_of_birth']
         family_member.gender = request.form['gender']
- family_member.photo = request.form.get('photo') # Use .get() for optional fields
- family_member.dod = request.form.get('date_of_death') # Use .get() for optional fields
+        family_member.photo = request.form.get('photo') # Use .get() for optional fields
+        family_member.dod = request.form.get('dod') # Use .get() for optional fields
 
         db.session.commit()
 
