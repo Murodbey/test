@@ -24,7 +24,7 @@
         </div>
         <br>
         <div>
-            <label for="member2_id">Member 2:</label>
+            <label for="member2">Member 2:</label>
             <select name="member2" id="member2" required>
                 {% for member in family_members %}
                     <option value="{{ member.id }}">{{ member.name }}</option>
