@@ -125,8 +125,14 @@ def view_member(member_id):
         ((Relationship.member1_id == member_id) | (Relationship.member2_id == member_id)),
         Relationship.user_id == user_id
     ).all()
-    return render_template('view_member.html', family_member=family_member, relationships=relationships)
 
+    parents = []
+    children = []
+    spouses = []
+
+    # Logic to populate parents, children, and spouses lists based on relationships will go here
+
+    return render_template('view_member.html', family_member=family_member, relationships=relationships, parents=parents, children=children, spouses=spouses)
 @app.route('/edit_member/<int:member_id>')
 def edit_member(member_id):
     if 'user_id' not in session:
@@ -165,7 +171,6 @@ def delete_member(member_id):
     else:
         # Optionally, handle other request methods or return an error
         abort(405) # Method Not Allowed
-@app.route('/add_relationship', methods=['GET', 'POST'])
 @app.route('/add_relationship')
 def add_relationship():
     if 'user_id' not in session:
