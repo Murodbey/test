@@ -18,8 +18,8 @@
     <h2>Your Family Members</h2>
     <ul>
         {% for member in family_members %}
-            <li><a href="{{ url_for('view_member', member_id=member.id) }}">{{ member.name }}</a></li>
-        {% end for %}
+            <li><a href="{{ url_for('view_member', member_id=member.id) }}">{{ member.name }}</a></li>{% endfor %}
+        
     </ul>
 
 </body>
