@@ -238,3 +238,11 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
 }
+
+.full-family-tree {
+    position: relative; /* Needed for absolute positioning of lines */
+    display: flex; /* Use flexbox to arrange member nodes */
+    flex-wrap: wrap; /* Allow nodes to wrap to the next line if needed */
+    justify-content: center; /* Center the member nodes */
+    margin-top: 30px; /* Add some space above the tree */
+}

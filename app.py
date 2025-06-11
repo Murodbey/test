@@ -129,68 +129,13 @@ def dashboard():
         return redirect(url_for('index'))
 
     user_id = session.get('user_id')
-    
-    # Find the FamilyMember record for the logged-in user
-    # Assuming the first FamilyMember for the user is the central one for the dashboard
-    family_member = FamilyMember.query.filter_by(user_id=user_id).first()
 
-    if not family_member:
-        # If the user hasn't added any family members yet, redirect to add member page
-        return redirect(url_for('add_member'))
+    # Fetch all family members and relationships for the logged-in user
+    family_members = FamilyMember.query.filter_by(user_id=user_id).all()
+    relationships = Relationship.query.filter_by(user_id=user_id).all()
 
-    # Fetch relationships for the central family member
-    relationships = Relationship.query.filter(
-        ((Relationship.member1_id == family_member.id) | (Relationship.member2_id == family_member.id)),
-        Relationship.user_id == user_id
-    ).all()
+    return render_template('dashboard.html', family_members=family_members, relationships=relationships)
 
-    parents = []
-    children = []
-    spouses = []
-    siblings = []
-
-    # Populate parents, children, and spouses lists
-    for relationship in relationships:
-        if relationship.member1_id == family_member.id:
-            other_member = FamilyMember.query.get(relationship.member2_id)
-            if other_member:
-                if relationship.relationship_type == 'parent-child':
-                    children.append(other_member)
-                elif relationship.relationship_type == 'spouse':
-                    spouses.append(other_member)
-        elif relationship.member2_id == family_member.id:
-            other_member = FamilyMember.query.get(relationship.member1_id)
-            if other_member:
-                if relationship.relationship_type == 'parent-child':
-                    parents.append(other_member)
-                elif relationship.relationship_type == 'spouse':
-                    spouses.append(other_member)
-
-    # To find siblings, iterate through the central member's parents
-    # and find all their children, excluding the central member
-    for parent in parents:
-        parent_relationships = Relationship.query.filter(
-            ((Relationship.member1_id == parent.id) & (Relationship.relationship_type == 'parent-child')) |
-            ((Relationship.member2_id == parent.id) & (Relationship.relationship_type == 'parent-child')),
-            Relationship.user_id == user_id
-        ).all()
-        for rel in parent_relationships:
-            if rel.member1_id == parent.id:
-                sibling = FamilyMember.query.get(rel.member2_id)
-                if sibling and sibling.id != family_member.id and sibling not in siblings:
-                    siblings.append(sibling)
-            elif rel.member2_id == parent.id:
-                sibling = FamilyMember.query.get(rel.member1_id)
-                if sibling and sibling.id != family_member.id and sibling not in siblings:
-                    siblings.append(sibling)
-
-    return render_template(
-        'dashboard.html',
-        family_member=family_member,
-        parents=parents,
-        children=children,
-        spouses=spouses,
-        siblings=siblings)
 
 @app.route('/logout')
 def logout():

@@ -18,54 +18,17 @@
         <a href="{{ url_for('add_member') }}">Add New Family Member</a> | <a href="{{ url_for('add_relationship') }}">Add New Relationship</a> | <a href="{{ url_for('profile') }}">Profile</a>
     </p>
 
-    <p class="dashboard-links"><a href="/logout">Logout</a></p>
+    <p class="dashboard-links"><a href="{{ url_for('logout') }}">Logout</a></p>
 
-    <div class="dashboard-tree">
- <div class="parents-row">
- {% if parents %}
- {% for parent in parents %}
- <div class="family-member-node">
- <a href="{{ url_for('view_member', member_id=parent.id) }}">{{ parent.name }}</a>
- </div>
- {% endfor %}
- {% else %}
-            <p>No parents added yet.</p>
- {% endif %}
- </div>
-
- <div class="user-row">
- {% if siblings %}
- {% for sibling in siblings %}
- <div class="family-member-node">
- <a href="{{ url_for('view_member', member_id=sibling.id) }}">{{ sibling.name }}</a>
- </div>
- {% endfor %}
- {% endif %}
- <div class="family-member-node current-member">
- <h2>{{ family_member.name }}</h2>
- {% if family_member.photo %}
- <img src="{{ url_for('static', filename='uploads/' + family_member.photo) }}" alt="{{ family_member.name }}'s Photo" style="max-width: 80px; height: auto; border-radius: 50%;">
- {% endif %}
- <p><a href="{{ url_for('view_member', member_id=family_member.id) }}">View Profile</a></p>
- </div>
- {% if spouses %}
- {% for spouse in spouses %}
- <div class="family-member-node">
- <a href="{{ url_for('view_member', member_id=spouse.id) }}">{{ spouse.name }}</a>
- </div>
- {% endfor %}
- {% endif %}
- </div>
-
- <div class="children-row">
- {% if children %}
- {% for child in children %}
- <div class="family-member-node">
- <a href="{{ url_for('view_member', member_id=child.id) }}">{{ child.name }}</a>
- </div>
- {% endfor %}
- {% endif %}
- </div>
+    <div class="full-family-tree">
+        {% for member in family_members %}
+            <div class="family-member-node" id="member-{{ member.id }}">
+                <a href="{{ url_for('view_member', member_id=member.id) }}">{{ member.name }}</a>
+                {% if member.photo %}
+                    <img src="{{ url_for('static', filename='uploads/' + member.photo) }}" alt="{{ member.name }}'s Photo" style="max-width: 80px; height: auto; border-radius: 50%;">
+                {% endif %}
+            </div>
+        {% endfor %}
     </div>
 
 </body>
