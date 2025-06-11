@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, session, abort
 from flask import jsonify # Import jsonify
 from sqlalchemy import or_
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app.config['SECRET_KEY'] = 'your_secret_key_here'  # Replace with a real secret key
 
