@@ -55,14 +55,15 @@ class Relationship(db.Model):
     def __repr__(self):
         return f'<Relationship {self.member1_id} - {self.relationship_type} - {self.member2_id}>'
     
-    def to_dict(self):
+    # Add a method to convert Relationship object to a dictionary
+    def to_dict(self): 
         return {
             'id': self.id,
             'user_id': self.user_id,
             'member1_id': self.member1_id,
             'member2_id': self.member2_id,
             'relationship_type': self.relationship_type,
-        return f'<Relationship {self.member1_id} - {self.relationship_type} - {self.member2_id}>'
+        }
 
 
 
