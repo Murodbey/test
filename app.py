@@ -218,7 +218,7 @@ def edit_profile():
 
 
 
-@app.route('/edit_member/<int:member_id>')
+@app.route('/edit_member/<int:member_id>', methods=['GET', 'POST'])
 def edit_member(member_id):
     if 'user_id' not in session:
         return redirect(url_for('index'))
