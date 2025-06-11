@@ -190,27 +190,9 @@ def add_relationship():
         db.session.add(new_relationship)
         db.session.commit()
 
-        return redirect(url_for('index'))
-
-    user_id = session.get('user_id')
-
-    family_members = FamilyMember.query.filter_by(user_id=user_id).all()
-
-    if request.method == 'POST':
-        member1_id = int(request.form['member1_id'])
-        member2_id = int(request.form['member2_id'])
-        relationship_type = request.form['relationship_type']
-
-        new_relationship = Relationship(user_id=user_id, member1_id=member1_id, member2_id=member2_id, relationship_type=relationship_type)
-        db.session.add(new_relationship)
-        db.session.commit()
-
         return redirect(url_for('dashboard'))
     else:
         return render_template('add_relationship.html', family_members=family_members)
-
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
