@@ -165,6 +165,7 @@ def view_member(member_id):
     # Populate parents, children, and spouses lists based on relationships
     for relationship in relationships:
         if relationship.member1_id == member_id:
+            print(f"Processing relationship: ID={relationship.id}, Member1={relationship.member1_id}, Member2={relationship.member2_id}, Type={relationship.relationship_type}")
             other_member = FamilyMember.query.get(relationship.member2_id)
             if other_member:
                 if relationship.relationship_type.lower() == 'child':
@@ -173,6 +174,7 @@ def view_member(member_id):
                     spouses.append({'member': other_member, 'relationship_id': relationship.id})
                 # Add other relationship types as needed
         elif relationship.member2_id == member_id:
+            print(f"Processing relationship: ID={relationship.id}, Member1={relationship.member1_id}, Member2={relationship.member2_id}, Type={relationship.relationship_type}")
             other_member = FamilyMember.query.get(relationship.member1_id)
             if other_member:
                 if relationship.relationship_type.lower() == 'parent':
