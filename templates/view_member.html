@@ -11,6 +11,7 @@
  <h1>{{ family_member.name }}</h1>
 
  <div class="family-tree-viz">
+ <div class="parents-container">
  <div class="mothers">
  {% if mothers %}
  <h3>Mother</h3>
@@ -34,6 +35,7 @@
  {% endfor %}
  {% else %}
  {% endif %}
+ </div>
  </div>
 
  <div class="current-member">
