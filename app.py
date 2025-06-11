@@ -330,6 +330,7 @@ def add_relationship():
     family_members = FamilyMember.query.filter_by(user_id=user_id).all()
 
     if request.method == 'POST':
+        print("DEBUG: Inside add_relationship POST block")
         member1_id = int(request.form['member1_id'])
         print(f"Member 1 ID received: {member1_id}")
         member2_id = int(request.form['member2_id'])
