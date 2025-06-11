@@ -166,7 +166,7 @@ def view_member(member_id):
             if other_member:
                 if relationship.relationship_type == 'parent-child':
                     children.append(other_member)
-                elif relationship.relationship_type == 'spouse':
+                elif relationship.relationship_type == 'spouse': # Keep spouse check as is
                     spouses.append(other_member)
                 # Add other relationship types as needed
         elif relationship.member2_id == member_id:
