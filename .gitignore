@@ -1,0 +1,14 @@
+gitignore
+# Byte-code files
+*.pyc
+__pycache__/
+
+# Virtual environment
+.venv/
+venv/
+
+# Database file
+database.db
+
+# Uploaded files (create this directory later for photos)
+uploads/
