@@ -33,7 +33,10 @@
             <h3>Parents</h3>
             <ul>
                 {% for parent in parents %}
-                    <li><a href="{{ url_for('view_member', member_id=parent.id) }}">{{ parent.name }}</a></li>
+                    <li>
+ <a href="{{ url_for('view_member', member_id=parent.id) }}">{{ parent.name }}</a>
+ <form method="POST" action="{{ url_for('delete_relationship', relationship_id=relationship.id) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this relationship?');"><button type="submit" style="background: none; border: none; color: red; cursor: pointer; padding: 0;">Delete</button></form>
+ </li>
                 {% endfor %}
         </ul>
         {% else %}
@@ -44,10 +47,14 @@
             <h3>Children</h3>
             <ul>
                 {% for child in children %}
-                    <li><a href="{{ url_for('view_member', member_id=child.id) }}">{{ child.name }}</a></li>
+                    <li>
+ <a href="{{ url_for('view_member', member_id=child.id) }}">{{ child.name }}</a>
+ <form method="POST" action="{{ url_for('delete_relationship', relationship_id=relationship.id) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this relationship?');"><button type="submit" style="background: none; border: none; color: red; cursor: pointer; padding: 0;">Delete</button></form>
+ </li>
                 {% endfor %}
             </ul>
         {% else %}
+
             <p>No children added yet.</p>
         {% endif %}
 
@@ -55,7 +62,10 @@
             <h3>Spouses</h3>
             <ul>
                 {% for spouse in spouses %}
-                    <li><a href="{{ url_for('view_member', member_id=spouse.id) }}">{{ spouse.name }}</a></li>
+                    <li>
+ <a href="{{ url_for('view_member', member_id=spouse.id) }}">{{ spouse.name }}</a>
+ <form method="POST" action="{{ url_for('delete_relationship', relationship_id=relationship.id) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this relationship?');"><button type="submit" style="background: none; border: none; color: red; cursor: pointer; padding: 0;">Delete</button></form>
+ </li>
                 {% endfor %}
             </ul>
         {% else %}
