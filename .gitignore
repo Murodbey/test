@@ -1,1 +1,14 @@
-instance/database.db
+# Flask
+database.db
+venv/
+.venv/
+__pycache__/
+.env
+
+# React
+my-family-tree-app/node_modules/
+my-family-tree-app/build/
+
+# Operating System files
+.DS_Store
+Thumbs.db
