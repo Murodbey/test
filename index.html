@@ -9,6 +9,28 @@
 <body>
     <h1>Welcome to the Family Tree App!</h1>
 
+    <h2>Register</h2>
+    <form method="POST" action="{{ url_for('register') }}">
+        <label for="reg_username">Username:</label><br>
+        <input type="text" id="reg_username" name="username" required><br><br>
+
+        <label for="reg_password">Password:</label><br>
+        <input type="password" id="reg_password" name="password" required><br><br>
+
+        <input type="submit" value="Register">
+    </form>
+
+    <h2>Login</h2>
+    <form method="POST" action="{{ url_for('login') }}">
+        <label for="login_username">Username:</label><br>
+        <input type="text" id="login_username" name="username" required><br><br>
+
+        <label for="login_password">Password:</label><br>
+        <input type="password" id="login_password" name="password" required><br><br>
+
+        <input type="submit" value="Login">
+    </form>
+
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
