@@ -63,6 +63,9 @@ body {
 
 .parents {
     margin-bottom: 30px; /* Increase space for line */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 }
 
 /* Refined vertical lines for parent-child connections */
