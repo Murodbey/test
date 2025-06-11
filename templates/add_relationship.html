@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Relationship</title>
+</head>
+<body>
+    <h1>Add New Relationship</h1>
+
+    <form method="POST" action="{{ url_for('add_relationship') }}">
+        <div>
+            <label for="member1">Member 1:</label>
+            <select name="member1" id="member1" required>
+                {% for member in family_members %}
+                    <option value="{{ member.id }}">{{ member.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <br>
+        <div>
+            <label for="relationship_type">Relationship Type:</label>
+            <input type="text" id="relationship_type" name="relationship_type" required>
+        </div>
+        <br>
+        <div>
+            <label for="member2">Member 2:</label>
+            <select name="member2" id="member2" required>
+                {% for member in family_members %}
+                    <option value="{{ member.id }}">{{ member.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <br>
+        <button type="submit">Add Relationship</button>
+    </form>
+
+    <p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Family Member</title>
+</head>
+<body>
+    <h1>Edit {{ family_member.name }}</h1>
+
+    <form action="{{ url_for('edit_member', member_id=family_member.id) }}" method="POST">
+        <div>
+            <label for="full_name">Full Name:</label>
+            <input type="text" id="full_name" name="full_name" value="{{ family_member.name }}" required>
+        </div>
+        <div>
+            <label for="date_of_birth">Date of Birth:</label>
+            <input type="date" id="date_of_birth" name="date_of_birth" value="{{ family_member.dob }}">
+        </div>
+        <div>
+            <label for="place_of_birth">Place of Birth:</label>
+            <input type="text" id="place_of_birth" name="place_of_birth" value="{{ family_member.location }}">
+        </div>
+        <div>
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender">
+                <option value="Male" {% if family_member.gender == 'Male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if family_member.gender == 'Female' %}selected{% endif %}>Female</option>
+                <option value="Other" {% if family_member.gender == 'Other' %}selected{% endif %}>Other</option>
+                <option value="Prefer not to say" {% if family_member.gender == 'Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Save Changes</button>
+        </div>
+    </form>
+
+    <p><a href="{{ url_for('view_member', member_id=family_member.id) }}">Cancel</a></p>
+
+</body>
+</html>
