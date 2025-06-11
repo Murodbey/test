@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, a
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from werkzeug.security import generate_password_hash, check_password_hash
-import os
+import os, sqlalchemy
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -241,6 +241,21 @@ def delete_relationship(relationship_id):
     db.session.commit()
 
     return redirect(url_for('dashboard'))
+
+@app.route('/search', methods=['GET'])
+def search():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    user_id = session.get('user_id')
+    search_query = request.args.get('search_query')
+
+    results = []
+    if search_query:
+        results = FamilyMember.query.filter(FamilyMember.name.ilike(f'%{search_query}%'), FamilyMember.user_id == user_id).all()
+
+    return render_template('search_results.html', results=results, search_query=search_query)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
