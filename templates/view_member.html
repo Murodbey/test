@@ -35,7 +35,6 @@
                 {% for parent in parents %}
                     <li><a href="{{ url_for('view_member', member_id=parent.id) }}">{{ parent.name }}</a></li>
                 {% endfor %}
-            {% endfor %}
         </ul>
         {% else %}
             <p>No parents added yet.</p>
