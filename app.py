@@ -283,9 +283,9 @@ def add_relationship():
         relationship_type = request.form['relationship_type']
         print(f"Relationship type received: {relationship_type}")
 
+ db.session.add(new_relationship)
         new_relationship = Relationship(user_id=user_id, member1_id=member1_id, member2_id=member2_id, relationship_type=relationship_type)
- print("DEBUG: Relationship added to session")
-        db.session.add(new_relationship)
+        print("DEBUG: Relationship added to session")
         db.session.commit()
 
         return redirect(url_for('dashboard'))
