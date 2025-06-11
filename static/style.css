@@ -27,3 +27,52 @@ body {
 .member-name {
     font-weight: bold;
 }
+
+/* Styling for the family members list on the dashboard */
+#dashboard-members-list {
+    list-style: none; /* Remove default bullets */
+ display: grid; /* Enable CSS Grid */
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Create a responsive grid */
+    gap: 20px; /* Add space between flex items */
+    padding: 0; /* Remove default padding */
+    margin: 20px 0;
+}
+
+#dashboard-members-list li {
+    border: 1px solid #ddd;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px; /* Optional: rounded corners */
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow */
+    text-align: center; /* Center the content */
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #555;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee; /* Add a subtle line below the heading */
+    padding-bottom: 5px;
+}
+
+.dashboard-links {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.dashboard-links a {
+    text-decoration: none;
+    color: #007bff; /* A common blue for links */
+    margin: 0 10px; /* Space out the links */
+    font-size: 1.1em;
+}
+
+.dashboard-links a:hover {
+    text-decoration: underline;
+}

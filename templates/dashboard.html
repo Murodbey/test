@@ -8,15 +8,15 @@
 <body>
     <h1>Welcome to Your Family Tree</h1>
 
-    <p>
+    <p class="dashboard-links">
         <a href="{{ url_for('add_member') }}">Add New Family Member</a> | <a href="{{ url_for('add_relationship') }}">Add New Relationship</a>
     </p>
 
-    <p><a href="/logout">Logout</a></p>
+    <p class="dashboard-links"><a href="/logout">Logout</a></p>
 
     <!-- Future area to display family members -->
     <h2>Your Family Members</h2>
-    <ul>
+    <ul id="dashboard-members-list">
         {% for member in family_members %}
             <li><a href="{{ url_for('view_member', member_id=member.id) }}">{{ member.name }}</a></li>{% endfor %}
         
