@@ -28,7 +28,6 @@ function App() {
             <Route path="/" element={<div>Home Page (Auth Check Needed)</div>} /> {/* Placeholder for root */}
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
-          <Routes>
             <Route path="/family-members" element={<FamilyMemberList />} />
             <Route path="/family-members/:memberId" element={<FamilyMemberDetail />} />
             <Route path="/add-family-member" element={<AddFamilyMember />} />
