@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import './App.css'; // Import the CSS file
 function AddRelationship() {
   const [formData, setFormData] = useState({
     member1_id: '',
@@ -75,7 +75,7 @@ function AddRelationship() {
   }
 
   return (
-    <div>
+    <div className="add-relationship-container"> {/* Add a class for potential styling */}
       <h1>Add New Relationship</h1>
       <form onSubmit={handleSubmit}>
         <div>

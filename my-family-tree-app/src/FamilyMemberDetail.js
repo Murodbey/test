@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 
-function FamilyMemberDetail({  }) { // Added prop for potential future use
- const { memberId } = useParams();
+function FamilyMemberDetail() {
+  const { memberId } = useParams();
   const [familyMember, setFamilyMember] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,16 +12,16 @@ function FamilyMemberDetail({  }) { // Added prop for potential future use
     const fetchFamilyMember = async () => {
       try {
         const response = await fetch(`/member/${memberId}`); // Corrected endpoint based on app.py routing
- if (!response.ok) {
-          throw new Error('Failed to fetch family member');
+        if (!response.ok) {
+ throw new Error('Failed to fetch family member');
         }
         const data = await response.json();
         setFamilyMember(data);
-        setLoading(false);
+ setLoading(false);
         setError(null); // Clear previous errors on successful fetch
       } catch (error) {
         setError(error.message);
-        setLoading(false);
+        setLoading(false); // Ensure loading is false after an error
  }
     };
  
@@ -46,6 +46,23 @@ function FamilyMemberDetail({  }) { // Added prop for potential future use
       }
     }
   };
+
+  const handleDeleteRelationship = async (relationshipId) => {
+    if (window.confirm('Are you sure you want to delete this relationship?')) {
+      try {
+        const response = await fetch(`/delete_relationship/${relationshipId}`, {
+          method: 'DELETE',
+        });
+        if (!response.ok) {
+ throw new Error('Failed to delete relationship');
+        }
+        // Refetch member details to update the displayed relationships
+        fetchFamilyMember(); // Call the function defined in useEffect
+      } catch (error) {
+ setError(error.message);
+      }
+    }
+  };
  
   if (loading) {
     return <div>Loading family member details...</div>;
@@ -59,13 +76,13 @@ function FamilyMemberDetail({  }) { // Added prop for potential future use
     return <div>Family member not found.</div>;
   }
 
- return (
+  return (
     <div className="family-member-details">
       <h1>{familyMember.name}</h1>
       {familyMember.photo && (
-        <div>
-          <img src={familyMember.photo} alt={`${familyMember.name}'s Photo`} style={{ maxWidth: '200px', height: 'auto' }} />
-        </div>
+        <div className="family-member-photo">
+          <img src={familyMember.photo} alt={`${familyMember.name}'s photo`} style={{ maxWidth: '200px', height: 'auto' }} />
+ </div>
       )}
       <div>
         <strong>Date of Birth:</strong> {familyMember.dob ? familyMember.dob : 'N/A'} {/* Added check for dob */}

@@ -173,7 +173,7 @@ def view_member(member_id):
     user_id = session.get('user_id')
     # Query for relationships where the member is either member1 or member2
     family_member = FamilyMember.query.filter_by(id=member_id, user_id=user_id).first_or_404()
-    relationships = Relationship.query.filter(
+ relationships = Relationship.query.filter(
         ((Relationship.member1_id == member_id) | (Relationship.member2_id == member_id)),
         Relationship.user_id == user_id
     ).all()
@@ -187,24 +187,21 @@ def view_member(member_id):
     # Populate parents, children, and spouses lists based on relationships
     for relationship in relationships:
         if relationship.member1_id == member_id:
-            print(f"Processing relationship: ID={relationship.id}, Member1={relationship.member1_id}, Member2={relationship.member2_id}, Type={relationship.relationship_type}")
-            other_member = FamilyMember.query.get(relationship.member2_id)
-            if other_member:
-                if relationship.relationship_type.lower() == 'child':
-                    children.append({'member': other_member, 'relationship_id': relationship.id})
-                elif relationship.relationship_type.lower() == 'spouse':
-                    spouses.append({'member': other_member, 'relationship_id': relationship.id})
-                # Add other relationship types as needed
+ other_member = FamilyMember.query.get(relationship.member2_id)
+ if other_member:
+ if relationship.relationship_type.lower() == 'child':
+ children.append({'member': other_member, 'relationship_id': relationship.id})
+ elif relationship.relationship_type.lower() == 'spouse':
+ spouses.append({'member': other_member, 'relationship_id': relationship.id})
+ # Add other relationship types as needed
         elif relationship.member2_id == member_id:
-            print(f"Processing relationship: ID={relationship.id}, Member1={relationship.member1_id}, Member2={relationship.member2_id}, Type={relationship.relationship_type}")
-            other_member = FamilyMember.query.get(relationship.member1_id)
-            if other_member:
-                if relationship.relationship_type.lower() == 'parent':
-                    # Pass both the parent object and the relationship ID
-                    if other_member.gender == 'Female':
-                        mothers.append({'member': other_member, 'relationship_id': relationship.id})
-                    elif other_member.gender == 'Male':
-                        fathers.append({'member': other_member, 'relationship_id': relationship.id})
+ other_member = FamilyMember.query.get(relationship.member1_id)
+ if other_member:
+ if relationship.relationship_type.lower() == 'parent':
+ if other_member.gender == 'Female':
+ mothers.append({'member': other_member, 'relationship_id': relationship.id})
+ elif other_member.gender == 'Male':
+ fathers.append({'member': other_member, 'relationship_id': relationship.id})
                 elif relationship.relationship_type.lower() == 'spouse':
                     spouses.append({'member': other_member, 'relationship_id': relationship.id})
                 # Add other relationship types as needed

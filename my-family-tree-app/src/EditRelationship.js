@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+
 function EditRelationship() {
   const { relationshipId } = useParams();
   const navigate = useNavigate();
@@ -18,7 +20,7 @@ function EditRelationship() {
     const fetchData = async () => {
       try {
         // Fetch relationship data
-        const relationshipResponse = await fetch(`/edit_relationship/${relationshipId}`);
+        const relationshipResponse = await fetch(`${BASE_URL}/edit_relationship/${relationshipId}`);
         if (!relationshipResponse.ok) {
           throw new Error('Failed to fetch relationship');
         }
@@ -31,11 +33,11 @@ function EditRelationship() {
         });
 
         // Fetch family members data
-        const membersResponse = await fetch('/dashboard'); // Assuming /dashboard returns family members
+        const membersResponse = await fetch(`${BASE_URL}/dashboard`); // Assuming /dashboard returns family members
         if (!membersResponse.ok) {
           throw new Error('Failed to fetch family members');
         }
-        const membersData = await membersResponse.json();
+        const membersData = await membersResponse.json(); // Assuming the response is directly the list of members or has a key like 'family_members'
         setFamilyMembers(membersData.family_members); // Adjust if your endpoint returns a different structure
 
         setLoading(false);
@@ -57,7 +59,7 @@ function EditRelationship() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch(`/update_relationship/${relationshipId}`, {
+      const response = await fetch(`${BASE_URL}/update_relationship/${relationshipId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
