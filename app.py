@@ -192,8 +192,8 @@ def view_member(member_id):
     user_id = session.get('user_id')
     # Query for relationships where the member is either member1 or member2
     family_member = FamilyMember.query.filter_by(id=member_id, user_id=user_id).first_or_404()
- relationships = Relationship.query.filter( 
-        ((Relationship.member1_id == member_id) | (Relationship.member2_id == member_id)),
+    relationships = Relationship.query.filter(
+       ((Relationship.member1_id == member_id) | (Relationship.member2_id == member_id)),
         Relationship.user_id == user_id
     ).all()
 
@@ -215,10 +215,10 @@ def view_member(member_id):
                 # Add other relationship types as needed
         elif relationship.member2_id == member_id:
             other_member = FamilyMember.query.get(relationship.member1_id)
- if other_member:
- if relationship.relationship_type.lower() == 'parent':
- if other_member.gender == 'Female':
- mothers.append({'member': other_member, 'relationship_id': relationship.id})
+            if other_member:
+                if relationship.relationship_type.lower() == 'parent':
+                    if other_member.gender == 'Female':
+                        mothers.append({'member': other_member, 'relationship_id': relationship.id})
  elif other_member.gender == 'Male':
  fathers.append({'member': other_member, 'relationship_id': relationship.id})
                 elif relationship.relationship_type.lower() == 'spouse':
@@ -292,14 +292,7 @@ def member_api(member_id):
     family_member = FamilyMember.query.filter_by(id=member_id, user_id=user_id).first_or_404()
 
     if request.method == 'GET':
- # Re-use the logic from view_member but return JSON
- return jsonify({
-        data = request.json
-        family_member.name = data.get('name', family_member.name)
-        family_member.dob = data.get('dob', family_member.dob)
-        family_member.location = data.get('location', family_member.location)
-        family_member.gender = data.get('gender', family_member.gender)
-        family_member.dod = data.get('dod', family_member.dod)
+        # Re-use the logic from view_member but return JSON
 
         # Handle photo update if needed (requires more complex logic for file uploads via API)
         db.session.commit()
@@ -328,13 +321,14 @@ def member_api(member_id):
 def edit_member_deprecated(member_id):
     return "This route is deprecated. Use the API endpoint."
 
+
 @app.route('/delete_member/<int:member_id>', methods=['POST'])
 def delete_member_deprecated(member_id):
     if 'user_id' not in session:
         return redirect(url_for('index'))
 @app.route('/add_relationship', methods=['GET', 'POST'])
 def add_relationship_deprecated(): 
- return "This route is deprecated. Use the API endpoint."
+    return "This route is deprecated. Use the API endpoint."
 
 @app.route('/api/relationships', methods=['POST'])
 def add_relationship():
@@ -387,12 +381,13 @@ def relationship_api(relationship_id):
         abort(405) # Method Not Allowed
 
 @app.route('/edit_relationship/<int:relationship_id>', methods=['POST'])
+def edit_relationship(relationship_id):
     user_id = session.get('user_id')
     relationship = Relationship.query.filter_by(id=relationship_id, user_id=user_id).first_or_404()
 
-    relationship.member1_id = int(request.form['member1_id'])
-    relationship.member2_id = int(request.form['member2_id'])
-    relationship.relationship_type = request.form['relationship_type']
+    relationship.member1_id = int(request.form.get('member1_id', relationship.member1_id))
+    relationship.member2_id = int(request.form.get('member2_id', relationship.member2_id))
+    relationship.relationship_type = request.form.get('relationship_type', relationship.relationship_type)
 
     db.session.commit()
 
