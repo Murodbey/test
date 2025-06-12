@@ -1,4 +1,6 @@
 # Flask
+*.db
+site.db
 database.db
 venv/
 .venv/
