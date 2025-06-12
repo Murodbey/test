@@ -7,6 +7,8 @@ import FamilyMemberDetail from '/Users/murodbey/Documents/test/my-family-tree-ap
 import AddFamilyMember from '/Users/murodbey/Documents/test/my-family-tree-app/src/AddFamilyMember';
 import EditFamilyMember from '/Users/murodbey/Documents/test/my-family-tree-app/src/EditFamilyMember';
 import AddRelationship from '/Users/murodbey/Documents/test/my-family-tree-app/src/AddRelationship';
+import Register from '/Users/murodbey/Documents/test/my-family-tree-app/src/Register';
+import Login from '/Users/murodbey/Documents/test/my-family-tree-app/src/Login';
 import EditRelationship from '/Users/murodbey/Documents/test/my-family-tree-app/src/EditRelationship';
  
 function App() {
@@ -22,6 +24,10 @@ function App() {
  {' | '} <Link to="/add-relationship">Add Relationship</Link>
         </nav>
         <main>
+          <Routes>
+            <Route path="/" element={<div>Home Page (Auth Check Needed)</div>} /> {/* Placeholder for root */}
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
           <Routes>
             <Route path="/family-members" element={<FamilyMemberList />} />
             <Route path="/family-members/:memberId" element={<FamilyMemberDetail />} />
