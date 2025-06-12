@@ -309,7 +309,6 @@ def member_api(member_id):
         abort(405) # Method Not Allowed
 
 @app.route('/edit_member/<int:member_id>', methods=['GET', 'POST'])
-def edit_member_deprecated(member_id):
  return "This route is deprecated. Use the API endpoint."
 
 @app.route('/delete_member/<int:member_id>', methods=['POST'])
@@ -318,47 +317,42 @@ def delete_member_deprecated(member_id):
         return redirect(url_for('index'))
 
 @app.route('/add_relationship', methods=['GET', 'POST'])
+def add_relationship_deprecated():
+ return "This route is deprecated. Use the API endpoint."
+
+@app.route('/api/relationships', methods=['POST'])
 def add_relationship():
     if 'user_id' not in session:
-        return redirect(url_for('index'))
+        return jsonify({'message': 'Not authenticated'}), 401
 
     user_id = session.get('user_id')
 
-    family_members = FamilyMember.query.filter_by(user_id=user_id).all()
+    data = request.get_json()
+    member1_id = data.get('member1_id')
+    member2_id = data.get('member2_id')
+    relationship_type = data.get('relationship_type')
 
-    if request.method == 'POST':
-        print("DEBUG: Inside add_relationship POST block")
-        member1_id = int(request.form['member1_id'])
-        print(f"Member 1 ID received: {member1_id}")
-        member2_id = int(request.form['member2_id'])
-        print(f"Member 2 ID received: {member2_id}")
-        relationship_type = request.form['relationship_type']
-        print(f"Relationship type received: {relationship_type}")
+    if not all([member1_id, member2_id, relationship_type]):
+        return jsonify({'message': 'Missing relationship data'}), 400
 
-        new_relationship = Relationship(user_id=user_id, member1_id=member1_id, member2_id=member2_id, relationship_type=relationship_type)
+    new_relationship = Relationship(user_id=user_id, member1_id=member1_id, member2_id=member2_id, relationship_type=relationship_type)
 
-        db.session.add(new_relationship)
-        print("DEBUG: Relationship added to session")
-        try:
-            db.session.commit()
-            print("DEBUG: Database session committed")
-        except Exception as e:
-            print(f"DEBUG: Error during database commit: {e}")
-            db.session.rollback()
+    db.session.add(new_relationship)
+    db.session.commit()
 
-        return redirect(url_for('dashboard'))
-    else:
-        return render_template('add_relationship.html', family_members=family_members)
+    return jsonify({'message': 'Relationship added successfully', 'relationship_id': new_relationship.id}), 201
+
 
 @app.route('/api/relationships/<int:relationship_id>', methods=['GET', 'PUT', 'DELETE'])
 def relationship_api(relationship_id):
     if 'user_id' not in session:
-        return redirect(url_for('index'))
+        return jsonify({'message': 'Not authenticated'}), 401
 
     user_id = session.get('user_id')
     relationship = Relationship.query.filter_by(id=relationship_id, user_id=user_id).first_or_404()
 
     if request.method == 'GET':
+        # Return the relationship data as JSON
         return jsonify(relationship.to_dict()), 200
 
     elif request.method == 'PUT':
@@ -369,10 +363,12 @@ def relationship_api(relationship_id):
         db.session.commit()
         return jsonify({'message': 'Relationship updated successfully'}), 200
 
-@app.route('/edit_relationship/<int:relationship_id>', methods=['POST'])
-def update_relationship(relationship_id):
-    if 'user_id' not in session:
-        return redirect(url_for('index'))
+    elif request.method == 'DELETE':
+        db.session.delete(relationship)
+        db.session.commit()
+        return jsonify({'message': 'Relationship deleted successfully'}), 200
+    else:
+        abort(405) # Method Not Allowed
 
     user_id = session.get('user_id')
     relationship = Relationship.query.filter_by(id=relationship_id, user_id=user_id).first_or_404()
@@ -383,19 +379,12 @@ def update_relationship(relationship_id):
 
     db.session.commit()
 
-    return redirect(url_for('view_member', member_id=relationship.member1_id))
-    elif request.method == 'DELETE':
-        db.session.delete(relationship)
- db.session.commit()
-    else:
-        abort(405) # Method Not Allowed
-
 @app.route('/edit_relationship/<int:relationship_id>', methods=['GET'])
-def edit_relationship(relationship_id):
+def edit_relationship_deprecated(relationship_id):
     return "This route is deprecated. Use the API endpoint."
 
 @app.route('/delete_relationship/<int:relationship_id>', methods=['POST'])
-def delete_relationship(relationship_id):
+def delete_relationship_deprecated(relationship_id):
     # Re-use the logic from relationship_api but handle template redirect
     return "This route is deprecated. Use the API endpoint."
 
