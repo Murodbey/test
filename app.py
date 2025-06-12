@@ -192,7 +192,7 @@ def view_member(member_id):
     user_id = session.get('user_id')
     # Query for relationships where the member is either member1 or member2
     family_member = FamilyMember.query.filter_by(id=member_id, user_id=user_id).first_or_404()
- relationships = Relationship.query.filter(
+ relationships = Relationship.query.filter( 
         ((Relationship.member1_id == member_id) | (Relationship.member2_id == member_id)),
         Relationship.user_id == user_id
     ).all()
@@ -206,15 +206,15 @@ def view_member(member_id):
     # Populate parents, children, and spouses lists based on relationships
     for relationship in relationships:
         if relationship.member1_id == member_id:
- other_member = FamilyMember.query.get(relationship.member2_id)
- if other_member:
- if relationship.relationship_type.lower() == 'child':
- children.append({'member': other_member, 'relationship_id': relationship.id})
- elif relationship.relationship_type.lower() == 'spouse':
- spouses.append({'member': other_member, 'relationship_id': relationship.id})
- # Add other relationship types as needed
+            other_member = FamilyMember.query.get(relationship.member2_id)
+            if other_member:
+                if relationship.relationship_type.lower() == 'child':
+                    children.append({'member': other_member, 'relationship_id': relationship.id})
+                elif relationship.relationship_type.lower() == 'spouse':
+                    spouses.append({'member': other_member, 'relationship_id': relationship.id})
+                # Add other relationship types as needed
         elif relationship.member2_id == member_id:
- other_member = FamilyMember.query.get(relationship.member1_id)
+            other_member = FamilyMember.query.get(relationship.member1_id)
  if other_member:
  if relationship.relationship_type.lower() == 'parent':
  if other_member.gender == 'Female':
@@ -292,7 +292,7 @@ def member_api(member_id):
     family_member = FamilyMember.query.filter_by(id=member_id, user_id=user_id).first_or_404()
 
     if request.method == 'GET':
-        # Re-use the logic from view_member but return JSON
+ # Re-use the logic from view_member but return JSON
  return jsonify({
         data = request.json
         family_member.name = data.get('name', family_member.name)
@@ -325,15 +325,15 @@ def member_api(member_id):
         abort(405) # Method Not Allowed
 
 @app.route('/edit_member/<int:member_id>', methods=['GET', 'POST'])
- return "This route is deprecated. Use the API endpoint."
+def edit_member_deprecated(member_id):
+    return "This route is deprecated. Use the API endpoint."
 
 @app.route('/delete_member/<int:member_id>', methods=['POST'])
 def delete_member_deprecated(member_id):
     if 'user_id' not in session:
         return redirect(url_for('index'))
-
 @app.route('/add_relationship', methods=['GET', 'POST'])
-def add_relationship_deprecated():
+def add_relationship_deprecated(): 
  return "This route is deprecated. Use the API endpoint."
 
 @app.route('/api/relationships', methods=['POST'])
@@ -386,6 +386,7 @@ def relationship_api(relationship_id):
     else:
         abort(405) # Method Not Allowed
 
+@app.route('/edit_relationship/<int:relationship_id>', methods=['POST'])
     user_id = session.get('user_id')
     relationship = Relationship.query.filter_by(id=relationship_id, user_id=user_id).first_or_404()
 
