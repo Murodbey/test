@@ -81,25 +81,29 @@ def index():
 def register():
     print("Register route hit")
     # Check if the request is an API request based on Accept header
-    is_api_request = 'application/json' in request.headers.get('Content-Type', '')
+    is_api_request = request.is_json
 
     data = request.get_json() if is_api_request else request.form
     username = data['username']
     password = data['password']
     hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
-    new_user = User(username=username, password=hashed_password)
-    db.session.add(new_user)
-    db.session.commit()
-    print(f"Accept header: {request.headers.get('Accept', '')}, Is API Request: {is_api_request}, Received Data: {data}")
-    print("Returning JSON response for register") if is_api_request else print("Returning redirect for register")
-    return jsonify({'message': 'User registered successfully'}) if is_api_request else redirect(url_for('index'))
+    # Always return JSON for API requests
+    if is_api_request:
+        new_user = User(username=username, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        print(f"Is API Request: {is_api_request}, Received Data: {data}")
+        print("Returning JSON response for register")
+        return jsonify({'message': 'User registered successfully'}), 201
+    else:
+        # Handle non-API requests (if any) - currently redirects to index
+        return redirect(url_for('index'))
 
 @app.route('/login', methods=['POST'])
 def login():
     print("Login route hit")
     # Check if the request is an API request based on Accept header
-    is_api_request = 'application/json' in request.headers.get('Content-Type', '')
 
     data = request.get_json() if is_api_request else request.form
     username = data['username']
@@ -109,13 +113,11 @@ def login():
     if user and check_password_hash(user.password, password):
         session['user_id'] = user.id
         if is_api_request:
-            print(f"Accept header: {request.headers.get('Accept', '')}, Is API Request: {is_api_request}, Received Data: {data}")
+            print(f"Is API Request: {is_api_request}, Received Data: {data}")
             print("Returning JSON response for successful login")
             return jsonify({'message': 'Login successful', 'user_id': user.id}), 200
         return redirect(url_for('dashboard'))
     else:
-        print(f"Accept header: {request.headers.get('Accept', '')}, Is API Request: {is_api_request}, Received Data: {data}")
-        print("Returning JSON error response for failed login") if is_api_request else print("Returning redirect for failed login")
         if is_api_request:
             return jsonify({'message': 'Invalid credentials'}), 401
         return redirect(url_for('index'))
