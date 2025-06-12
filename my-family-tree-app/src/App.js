@@ -1,7 +1,7 @@
 import './App.css';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Profile from './Profile';// Use full path
-import EditProfile from '.\/EditProfile'; // Import EditProfile
+import EditProfile from './EditProfile'; // Import EditProfile
  
 function App() {
   return (
