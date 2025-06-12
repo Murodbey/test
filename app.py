@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, a
 from flask import jsonify # Import jsonify
 from sqlalchemy import or_, inspect
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS # Import CORS
 from werkzeug.utils import secure_filename
 import os
 
