@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from './AuthContext';
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || ''; // Assuming you have a BASE_URL environment variable
 
 function Login() {
+  const { login } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -37,8 +39,7 @@ function Login() {
       }
 
       // Assuming successful login returns user data or a token
-      const userData = await response.json(); // You might receive user info or a token here
-      // TODO: Handle successful login - e.g., store token/user info in local storage or context
+      const userData = await response.json(); // You might receive user info or a token here      
       console.log('Login successful:', userData); // Placeholder for handling login success
 
       setLoading(false);
