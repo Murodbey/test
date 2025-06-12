@@ -211,32 +211,38 @@ def view_member(member_id):
 
     print(f"DEBUG: Data being sent to template - Mothers: {mothers}, Fathers: {fathers}, Children: {children}, Spouses: {spouses}, Siblings: {siblings}")
     return render_template('view_member.html', family_member=family_member, relationships=relationships, mothers=mothers, fathers=fathers, children=children, spouses=spouses, siblings=siblings)
-
-
-@app.route('/profile', methods=['GET'])
+@app.route('/api/profile', methods=['GET'])
 def profile():
     if 'user_id' not in session:
-        return redirect(url_for('index'))
+        return jsonify({'message': 'Not authenticated'}), 401
 
     user_id = session.get('user_id')
     user = User.query.get(user_id)
 
     if user:
-        return render_template('profile.html', user=user)
+        return jsonify({
+            'id': user.id,
+            'username': user.username,
+            'email': user.email
+        }), 200
     else:
-        # This case ideally shouldn't happen if session['user_id'] is set correctly
-        return redirect(url_for('dashboard'))
+        return jsonify({'message': 'User not found'}), 404
 
-
-@app.route('/edit_profile', methods=['GET', 'POST'])
+@app.route('/api/profile', methods=['PUT'])
 def edit_profile():
     if 'user_id' not in session:
-        return redirect(url_for('index'))
+        return jsonify({'message': 'Not authenticated'}), 401
 
     user_id = session.get('user_id')
     user = User.query.get(user_id)
 
     if user:
+        data = request.json
+        user.username = data.get('username', user.username)
+        user.email = data.get('email', user.email)
+
+        db.session.commit()
+
         if request.method == 'POST':
             user.username = request.form['username']
             user.email = request.form.get('email') # Use .get() for optional fields
@@ -247,8 +253,7 @@ def edit_profile():
         else:
             return render_template('edit_profile.html', user=user)
     else:
-        # This case ideally shouldn't happen if session['user_id'] is set correctly
-        return redirect(url_for('dashboard'))
+        return jsonify({'message': 'User not found'}), 404
 
 
 
