@@ -100,45 +100,28 @@ def login():
     else:
         return redirect(url_for('index'))
 
-@app.route('/add_member', methods=['GET', 'POST'])
 @app.route('/api/members', methods=['POST']) # New API endpoint
-def add_member(): # This function now handles both template and API requests
+def add_member():
     if 'user_id' not in session:
-        return redirect(url_for('index'))
+        return jsonify({'message': 'Not authenticated'}), 401
 
     if request.method == 'POST':
         user_id = session['user_id']
-        full_name = request.form['full_name']
-        date_of_birth = request.form['date_of_birth']
-        place_of_birth = request.form['place_of_birth']
-        gender = request.form['gender']
+        data = request.get_json()
+        full_name = data.get('name')
+        date_of_birth = data.get('dob')
+        place_of_birth = data.get('location')
+        gender = data.get('gender')
+        date_of_death = data.get('dod')
         photo_path = None # Initialize photo_path to None
-
-        if 'photo' in request.files:
-            file = request.files['photo']
-            if file.filename != '' and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                upload_folder_path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-                os.makedirs(upload_folder_path, exist_ok=True) # Create upload folder if it doesn't exist
-                file_path = os.path.join(upload_folder_path, filename)
-                file.save(file_path)
-                photo_path = os.path.join('/', app.config['UPLOAD_FOLDER'], filename) # Store path relative to static
-
-        date_of_death = request.form.get('dod') 
 
         new_member = FamilyMember(user_id=user_id, name=full_name, dob=date_of_birth, location=place_of_birth, gender=gender, photo=photo_path, dod=date_of_death)
         db.session.add(new_member)
 
         db.session.commit()
 
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json: # Check if it's an API request
-            return jsonify({'message': 'Family member added successfully', 'member_id': new_member.id}), 201
-        else:
-            return redirect(url_for('dashboard'))
-    else:
-        # Handle GET request for the template (if still needed)
-        # You might want to remove this if you are fully migrating to React
-        return render_template('add_family_member.html')
+        return jsonify({'message': 'Family member added successfully', 'member_id': new_member.id}), 201
+
 
 @app.route('/dashboard')
 def dashboard():
@@ -284,26 +267,17 @@ def edit_profile():
     else:
         return jsonify({'message': 'User not found'}), 404
 
-@app.route('/api/members/<int:member_id>', methods=['GET'])
-def get_member_api(member_id):
-    # Re-use the logic from view_member but return JSON
-    return view_member(member_id)
-
-
-
-
-
-
-@app.route('/edit_member/<int:member_id>', methods=['GET', 'POST'])
-@app.route('/api/members/<int:member_id>', methods=['PUT']) # New API endpoint
-def edit_member(member_id): # This function now handles both template and API requests
+@app.route('/api/members/<int:member_id>', methods=['GET', 'PUT', 'DELETE'])
+def member_api(member_id):
     if 'user_id' not in session:
         return redirect(url_for('index'))
 
     user_id = session['user_id']
     family_member = FamilyMember.query.filter_by(id=member_id, user_id=user_id).first_or_404()
 
-    if request.method == 'PUT': # Handle API PUT request
+    if request.method == 'GET':
+        # Re-use the logic from view_member but return JSON
+ return jsonify({
         data = request.json
         family_member.name = data.get('name', family_member.name)
         family_member.dob = data.get('dob', family_member.dob)
@@ -312,45 +286,36 @@ def edit_member(member_id): # This function now handles both template and API re
         family_member.dod = data.get('dod', family_member.dod)
 
         # Handle photo update if needed (requires more complex logic for file uploads via API)
+        db.session.commit()
+        return jsonify({'message': 'Family member updated successfully'}), 200
+    elif request.method == 'PUT':
+        data = request.json
+        family_member.name = data.get('name', family_member.name)
+        family_member.dob = data.get('dob', family_member.dob)
+        family_member.location = data.get('location', family_member.location)
+        family_member.gender = data.get('gender', family_member.gender)
+        family_member.dod = data.get('dod', family_member.dod)
 
+        # Handle photo update if needed (requires more complex logic for file uploads via API)
         db.session.commit()
         return jsonify({'message': 'Family member updated successfully'}), 200
 
-    elif request.method == 'POST': # Handle form submission (for template)
-        # Update the family member's data
-        family_member.name = request.form['full_name']
-        family_member.dob = request.form['date_of_birth']
-        family_member.location = request.form['place_of_birth']
-        family_member.gender = request.form['gender']
-        family_member.photo = request.form.get('photo') 
-        family_member.dod = request.form.get('dod') 
-
+    elif request.method == 'DELETE':
+        db.session.delete(family_member)
         db.session.commit()
-        # Redirect to the view member page
-        return redirect(url_for('view_member', member_id=family_member.id))
+        return jsonify({'message': 'Family member deleted successfully'}), 200
+
     else:
-        return render_template('edit_member.html', family_member=family_member)
+        abort(405) # Method Not Allowed
+
+@app.route('/edit_member/<int:member_id>', methods=['GET', 'POST'])
+def edit_member_deprecated(member_id):
+ return "This route is deprecated. Use the API endpoint."
 
 @app.route('/delete_member/<int:member_id>', methods=['POST'])
-def delete_member(member_id):
-@app.route('/api/members/<int:member_id>', methods=['DELETE']) # New API endpoint
-def delete_member(member_id): # This function now handles both template and API requests
+def delete_member_deprecated(member_id):
     if 'user_id' not in session:
         return redirect(url_for('index'))
-
-    user_id = session['user_id']
-    family_member = FamilyMember.query.filter_by(id=member_id, user_id=user_id).first_or_404()
-
-    # Ensure the request is a POST request (for security, to prevent accidental deletion via GET link)
-    db.session.delete(family_member)
-    db.session.commit()
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json: # Check if it's an API request
-        return jsonify({'message': 'Family member deleted successfully'}), 200
-    else:
-        return redirect(url_for('dashboard'))
-    else:
-        # Optionally, handle other request methods or return an error
-        abort(405) # Method Not Allowed
 
 @app.route('/add_relationship', methods=['GET', 'POST'])
 def add_relationship():
@@ -385,18 +350,24 @@ def add_relationship():
     else:
         return render_template('add_relationship.html', family_members=family_members)
 
-
-@app.route('/edit_relationship/<int:relationship_id>', methods=['GET'])
-def edit_relationship(relationship_id):
+@app.route('/api/relationships/<int:relationship_id>', methods=['GET', 'PUT', 'DELETE'])
+def relationship_api(relationship_id):
     if 'user_id' not in session:
         return redirect(url_for('index'))
 
     user_id = session.get('user_id')
     relationship = Relationship.query.filter_by(id=relationship_id, user_id=user_id).first_or_404()
 
-    family_members = FamilyMember.query.filter_by(user_id=user_id).all()
+    if request.method == 'GET':
+        return jsonify(relationship.to_dict()), 200
 
-    return render_template('edit_relationship.html', relationship=relationship, family_members=family_members)
+    elif request.method == 'PUT':
+        data = request.json
+        relationship.member1_id = data.get('member1_id', relationship.member1_id)
+        relationship.member2_id = data.get('member2_id', relationship.member2_id)
+        relationship.relationship_type = data.get('relationship_type', relationship.relationship_type)
+        db.session.commit()
+        return jsonify({'message': 'Relationship updated successfully'}), 200
 
 @app.route('/edit_relationship/<int:relationship_id>', methods=['POST'])
 def update_relationship(relationship_id):
@@ -413,19 +384,20 @@ def update_relationship(relationship_id):
     db.session.commit()
 
     return redirect(url_for('view_member', member_id=relationship.member1_id))
+    elif request.method == 'DELETE':
+        db.session.delete(relationship)
+ db.session.commit()
+    else:
+        abort(405) # Method Not Allowed
+
+@app.route('/edit_relationship/<int:relationship_id>', methods=['GET'])
+def edit_relationship(relationship_id):
+    return "This route is deprecated. Use the API endpoint."
 
 @app.route('/delete_relationship/<int:relationship_id>', methods=['POST'])
 def delete_relationship(relationship_id):
-    if 'user_id' not in session:
-        return redirect(url_for('index'))
-
-    user_id = session.get('user_id')
-    relationship = Relationship.query.filter_by(id=relationship_id, user_id=user_id).first_or_404()
-
-    db.session.delete(relationship)
-    db.session.commit()
-
-    return redirect(url_for('dashboard'))
+    # Re-use the logic from relationship_api but handle template redirect
+    return "This route is deprecated. Use the API endpoint."
 
 @app.route('/search', methods=['GET'])
 def search():
