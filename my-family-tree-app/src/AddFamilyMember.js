@@ -67,68 +67,75 @@ function AddFamilyMember() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <h2>Add New Family Member</h2>
+      <form onSubmit={handleSubmit} className="family-member-form">
+       <div>
           <label htmlFor="name">Full Name:</label>
           <input
             type="text"
             id="name"
             name="name"
             value={formData.name}
-            onChange={handleChange}
-            required
+           onChange={handleChange}
+           required
           />
+       </div>
         <div>
           <label htmlFor="dob">Date of Birth:</label>
           <input
             type="date"
             id="dob"
             name="dob"
-            value={formData.dob}
-            onChange={handleChange}
+           value={formData.dob || ''}
+           onChange={handleChange}
           />
+        </div>
         <div>
           <label htmlFor="location">Place of Birth:</label>
           <input
             type="text"
-            id="location"
+           id="location"
             name="location"
             value={formData.location}
             onChange={handleChange}
           />
-        <div>
-          <label htmlFor="gender">Gender:</label>
-          <select
-            id="gender"
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-          >
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-            <option value="Prefer not to say">Prefer not to say</option>
-          </select>
         </div>
+        <div>
+         <label htmlFor="gender">Gender:</label>
+         <select
+           id="gender"
+           name="gender"
+           value={formData.gender}
+           onChange={handleChange}
+         >
+           <option value="">Select Gender</option>
+           <option value="Male">Male</option>
+           <option value="Female">Female</option>
+           <option value="Other">Other</option>
+           <option value="Prefer not to say">Prefer not to say</option>
+         </select>
+        </div>
+        <div>
           <label htmlFor="photo">Photo:</label>
           <input
             type="file"
             id="photo"
             name="photo"
- accept="image/*"
+           accept="image/*"
             onChange={handleFileChange}
           />
+        </div>
         <div>
           <label htmlFor="dod">Date of Death:</label>
-          <input
-            type="date"
+         <input
+           type="date"
             id="dod"
             name="dod"
             value={formData.dod}
             onChange={handleChange}
           />
         </div>
-        <button type="submit" disabled={loading}>
+       <button type="submit" disabled={loading}>
           {loading ? 'Adding...' : 'Add Member'}
         </button>
       </form>
