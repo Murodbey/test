@@ -216,10 +216,10 @@ def view_member(member_id):
         elif relationship.member2_id == member_id:
             other_member = FamilyMember.query.get(relationship.member1_id)
             if other_member:
- if relationship.relationship_type.lower() == 'parent':
- if other_member.gender == 'Female':
- mothers.append({'member': other_member, 'relationship_id': relationship.id})
- elif other_member.gender == 'Male':
+                if relationship.relationship_type.lower() == 'parent':
+                    if other_member.gender == 'Female':
+                        mothers.append({'member': other_member, 'relationship_id': relationship.id})
+                    elif other_member.gender == 'Male':
  fathers.append({'member': other_member, 'relationship_id': relationship.id})
                 elif relationship.relationship_type.lower() == 'spouse':
                     spouses.append({'member': other_member, 'relationship_id': relationship.id})
@@ -293,8 +293,22 @@ def member_api(member_id):
 
     if request.method == 'GET':
         # Re-use the logic from view_member but return JSON
- return jsonify({
+        return jsonify({
+            'id': family_member.id,
+            'name': family_member.name,
+            'photo': family_member.photo,
+            'dob': family_member.dob,
+            'dod': family_member.dod,
+            'location': family_member.location,
+            'gender': family_member.gender,
+            'relationships': [relationship.to_dict() for relationship in family_member.relationships_as_member1.all() + family_member.relationships_as_member2.all()] # Fetch and include relationships
+        })
+
     elif request.method == 'PUT':
+        # if 'user_id' not in session:
+        #     return jsonify({'message': 'Not authenticated'}), 401
+
+        # user_id = session['user_id']
         data = request.json
         family_member.name = data.get('name', family_member.name)
         family_member.dob = data.get('dob', family_member.dob)
@@ -307,6 +321,9 @@ def member_api(member_id):
         return jsonify({'message': 'Family member updated successfully'}), 200
 
     elif request.method == 'DELETE':
+        # if 'user_id' not in session:
+        #     return jsonify({'message': 'Not authenticated'}), 401
+
         db.session.delete(family_member)
         db.session.commit()
         return jsonify({'message': 'Family member deleted successfully'}), 200
@@ -323,10 +340,10 @@ def edit_member_deprecated(member_id):
 def delete_member_deprecated(member_id):
     if 'user_id' not in session:
         return redirect(url_for('index'))
+
 @app.route('/add_relationship', methods=['GET', 'POST'])
 def add_relationship_deprecated(): 
     return "This route is deprecated. Use the API endpoint."
-
 @app.route('/api/relationships', methods=['POST'])
 def add_relationship():
     if 'user_id' not in session:
