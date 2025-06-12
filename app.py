@@ -80,7 +80,7 @@ def index():
 def register():
     print("Register route hit")
     # Check if the request is an API request based on Accept header
-    is_api_request = 'application/json' in request.headers.get('Accept', '')
+    is_api_request = 'application/json' in request.headers.get('Content-Type', '')
 
     data = request.get_json() if is_api_request else request.form
     username = data['username']
@@ -98,7 +98,7 @@ def register():
 def login():
     print("Login route hit")
     # Check if the request is an API request based on Accept header
-    is_api_request = 'application/json' in request.headers.get('Accept', '')
+    is_api_request = 'application/json' in request.headers.get('Content-Type', '')
 
     data = request.get_json() if is_api_request else request.form
     username = data['username']
