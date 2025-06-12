@@ -216,20 +216,20 @@ def view_member(member_id):
         elif relationship.member2_id == member_id:
             other_member = FamilyMember.query.get(relationship.member1_id)
             if other_member:
-                if relationship.relationship_type.lower() == 'parent':
-                    if other_member.gender == 'Female':
-                        mothers.append({'member': other_member, 'relationship_id': relationship.id})
-                    elif other_member.gender == 'Male':
+ if relationship.relationship_type.lower() == 'parent':
+ if other_member.gender == 'Female':
+ mothers.append({'member': other_member, 'relationship_id': relationship.id})
+ elif other_member.gender == 'Male':
  fathers.append({'member': other_member, 'relationship_id': relationship.id})
-                elif relationship.relationship_type.lower() == 'spouse':
-                    spouses.append({'member': other_member, 'relationship_id': relationship.id})
-                # Add other relationship types as needed
+ elif relationship.relationship_type.lower() == 'spouse':
+ spouses.append({'member': other_member, 'relationship_id': relationship.id})
+ # Add other relationship types as needed
 
     print(f"DEBUG: Data being sent to template - Mothers: {mothers}, Fathers: {fathers}, Children: {children}, Spouses: {spouses}, Siblings: {siblings}")
-    
+
     # If the request is an API request, return JSON
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
-        return jsonify({
+ return jsonify({
             'id': family_member.id,
             'name': family_member.name,
             'photo': family_member.photo,
@@ -340,10 +340,10 @@ def edit_member_deprecated(member_id):
 def delete_member_deprecated(member_id):
     if 'user_id' not in session:
         return redirect(url_for('index'))
-
 @app.route('/add_relationship', methods=['GET', 'POST'])
 def add_relationship_deprecated(): 
     return "This route is deprecated. Use the API endpoint."
+
 @app.route('/api/relationships', methods=['POST'])
 def add_relationship():
     if 'user_id' not in session:
