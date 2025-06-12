@@ -2,7 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Profile from '/my-family-tree-app/src/Profile'; // Use full path
-import EditProfile from './EditProfile'; // Import EditProfile
+import EditProfile from '/my-family-tree-app/src/EditProfile'; // Import EditProfile
 
 function App() {
   return (
