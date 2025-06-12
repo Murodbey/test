@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+const BASE_URL = process.env.REACT_APP_API_BASE_URL || ''; // Assuming you have a BASE_URL environment variable
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -36,14 +36,13 @@ function Login() {
         throw new Error(errorData.message || 'Login failed');
       }
 
-      const data = await response.json();
-      // Handle successful login: store token or user info
-      // Example: localStorage.setItem('token', data.token);
-      // Example: localStorage.setItem('user', JSON.stringify(data.user));
-      console.log('Login successful:', data); // Log for now, replace with actual auth handling
+      // Assuming successful login returns user data or a token
+      const userData = await response.json(); // You might receive user info or a token here
+      // TODO: Handle successful login - e.g., store token/user info in local storage or context
+      console.log('Login successful:', userData); // Placeholder for handling login success
 
       setLoading(false);
-      navigate('/dashboard'); // Navigate to dashboard on success (adjust path as needed)
+      navigate('/dashboard'); // Navigate to dashboard on successful login
 
     } catch (error) {
       setError(error.message);
