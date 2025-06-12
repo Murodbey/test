@@ -6,7 +6,6 @@ from werkzeug.utils import secure_filename
 import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
 app.config['SECRET_KEY'] = 'your_secret_key_here'  # Replace with a real secret key
@@ -102,12 +101,13 @@ def login():
         return redirect(url_for('index'))
 
 @app.route('/add_member', methods=['GET', 'POST'])
-def add_member():
+@app.route('/api/members', methods=['POST']) # New API endpoint
+def add_member(): # This function now handles both template and API requests
     if 'user_id' not in session:
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        user_id = session.get('user_id')
+        user_id = session['user_id']
         full_name = request.form['full_name']
         date_of_birth = request.form['date_of_birth']
         place_of_birth = request.form['place_of_birth']
@@ -124,15 +124,20 @@ def add_member():
                 file.save(file_path)
                 photo_path = os.path.join('/', app.config['UPLOAD_FOLDER'], filename) # Store path relative to static
 
-        date_of_death = request.form.get('dod') # Use .get() for optional fields
+        date_of_death = request.form.get('dod') 
 
         new_member = FamilyMember(user_id=user_id, name=full_name, dob=date_of_birth, location=place_of_birth, gender=gender, photo=photo_path, dod=date_of_death)
         db.session.add(new_member)
 
         db.session.commit()
 
-        return redirect(url_for('dashboard'))
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json: # Check if it's an API request
+            return jsonify({'message': 'Family member added successfully', 'member_id': new_member.id}), 201
+        else:
+            return redirect(url_for('dashboard'))
     else:
+        # Handle GET request for the template (if still needed)
+        # You might want to remove this if you are fully migrating to React
         return render_template('add_family_member.html')
 
 @app.route('/dashboard')
@@ -158,11 +163,24 @@ def dashboard():
     } for member in family_members]
     relationships_data = [relationship.to_dict() for relationship in relationships]
 
+    # If the request is an API request, return JSON
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+         family_members_data = [{
+            'id': member.id,
+            'name': member.name,
+            'photo': member.photo,
+            'dob': member.dob,
+            'dod': member.dod,
+            'location': member.location,
+            'gender': member.gender
+        } for member in family_members]
+         return jsonify(family_members=family_members_data, relationships=relationships_data)
+
     return jsonify(family_members=family_members_data, relationships=relationships_data)
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)
-    return redirect(url_for('index'))
+ session.pop('user_id', None)
+ return jsonify({'message': 'Logged out successfully'}), 200
 
 @app.route('/member/<int:member_id>')
 def view_member(member_id):
@@ -177,9 +195,8 @@ def view_member(member_id):
         Relationship.user_id == user_id
     ).all()
 
-    mothers = [] # List to store mother members and their relationship IDs
-    fathers = [] # List to store father members and their relationship IDs    
-
+    mothers = [] 
+    fathers = [] 
     siblings = [] # List to store sibling members and their relationship IDs
     children = []
     spouses = []
@@ -210,7 +227,28 @@ def view_member(member_id):
                 # Add other relationship types as needed
 
     print(f"DEBUG: Data being sent to template - Mothers: {mothers}, Fathers: {fathers}, Children: {children}, Spouses: {spouses}, Siblings: {siblings}")
-    return render_template('view_member.html', family_member=family_member, relationships=relationships, mothers=mothers, fathers=fathers, children=children, spouses=spouses, siblings=siblings)
+    
+    # If the request is an API request, return JSON
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+        return jsonify({
+            'id': family_member.id,
+            'name': family_member.name,
+            'photo': family_member.photo,
+            'dob': family_member.dob,
+            'dod': family_member.dod,
+            'location': family_member.location,
+            'gender': family_member.gender,
+            'relationships': [relationship.to_dict() for relationship in relationships],
+            'mothers': [{'member_id': m['member'].id, 'name': m['member'].name, 'relationship_id': m['relationship_id']} for m in mothers],
+            'fathers': [{'member_id': f['member'].id, 'name': f['member'].name, 'relationship_id': f['relationship_id']} for f in fathers],
+            'children': [{'member_id': c['member'].id, 'name': c['member'].name, 'relationship_id': c['relationship_id']} for c in children],
+            'spouses': [{'member_id': s['member'].id, 'name': s['member'].name, 'relationship_id': s['relationship_id']} for s in spouses],
+            'siblings': [{'member_id': s['member'].id, 'name': s['member'].name, 'relationship_id': s['relationship_id']} for s in siblings]
+        })
+
+    # Remove this if you are fully migrating to React
+    # return render_template('view_member.html', family_member=family_member, relationships=relationships, mothers=mothers, fathers=fathers, children=children, spouses=spouses, siblings=siblings)
+
 @app.route('/api/profile', methods=['GET'])
 def profile():
     if 'user_id' not in session:
@@ -242,20 +280,14 @@ def edit_profile():
         user.email = data.get('email', user.email)
 
         db.session.commit()
-
-        if request.method == 'POST':
-            user.username = request.form['username']
-            user.email = request.form.get('email') # Use .get() for optional fields
-
-            db.session.commit()
-
-            return redirect(url_for('profile'))
-        else:
-            return render_template('edit_profile.html', user=user)
+        return jsonify({'message': 'Profile updated successfully'}), 200
     else:
         return jsonify({'message': 'User not found'}), 404
 
-
+@app.route('/api/members/<int:member_id>', methods=['GET'])
+def get_member_api(member_id):
+    # Re-use the logic from view_member but return JSON
+    return view_member(member_id)
 
 
 
@@ -263,24 +295,37 @@ def edit_profile():
 
 
 @app.route('/edit_member/<int:member_id>', methods=['GET', 'POST'])
-def edit_member(member_id):
+@app.route('/api/members/<int:member_id>', methods=['PUT']) # New API endpoint
+def edit_member(member_id): # This function now handles both template and API requests
     if 'user_id' not in session:
         return redirect(url_for('index'))
 
-    user_id = session.get('user_id')
+    user_id = session['user_id']
     family_member = FamilyMember.query.filter_by(id=member_id, user_id=user_id).first_or_404()
 
-    if request.method == 'POST':
+    if request.method == 'PUT': # Handle API PUT request
+        data = request.json
+        family_member.name = data.get('name', family_member.name)
+        family_member.dob = data.get('dob', family_member.dob)
+        family_member.location = data.get('location', family_member.location)
+        family_member.gender = data.get('gender', family_member.gender)
+        family_member.dod = data.get('dod', family_member.dod)
+
+        # Handle photo update if needed (requires more complex logic for file uploads via API)
+
+        db.session.commit()
+        return jsonify({'message': 'Family member updated successfully'}), 200
+
+    elif request.method == 'POST': # Handle form submission (for template)
         # Update the family member's data
         family_member.name = request.form['full_name']
         family_member.dob = request.form['date_of_birth']
         family_member.location = request.form['place_of_birth']
         family_member.gender = request.form['gender']
-        family_member.photo = request.form.get('photo') # Use .get() for optional fields
-        family_member.dod = request.form.get('dod') # Use .get() for optional fields
+        family_member.photo = request.form.get('photo') 
+        family_member.dod = request.form.get('dod') 
 
         db.session.commit()
-
         # Redirect to the view member page
         return redirect(url_for('view_member', member_id=family_member.id))
     else:
@@ -288,16 +333,20 @@ def edit_member(member_id):
 
 @app.route('/delete_member/<int:member_id>', methods=['POST'])
 def delete_member(member_id):
+@app.route('/api/members/<int:member_id>', methods=['DELETE']) # New API endpoint
+def delete_member(member_id): # This function now handles both template and API requests
     if 'user_id' not in session:
         return redirect(url_for('index'))
 
-    user_id = session.get('user_id')
+    user_id = session['user_id']
     family_member = FamilyMember.query.filter_by(id=member_id, user_id=user_id).first_or_404()
 
     # Ensure the request is a POST request (for security, to prevent accidental deletion via GET link)
-    if request.method == 'POST':
-        db.session.delete(family_member)
-        db.session.commit()
+    db.session.delete(family_member)
+    db.session.commit()
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json: # Check if it's an API request
+        return jsonify({'message': 'Family member deleted successfully'}), 200
+    else:
         return redirect(url_for('dashboard'))
     else:
         # Optionally, handle other request methods or return an error
@@ -394,4 +443,4 @@ def search():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+     app.run(debug=True)
