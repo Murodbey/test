@@ -78,15 +78,18 @@ def index():
 
 @app.route('/register', methods=['POST'])
 def register():
-    username = request.form['username']
-    password = request.form['password']
+    # Check if the request is an API request based on Accept header
+    is_api_request = 'application/json' in request.headers.get('Accept', '')
+
+    data = request.get_json() if is_api_request else request.form
+    username = data['username']
+    password = data['password']
     hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
     new_user = User(username=username, password=hashed_password)
     db.session.add(new_user)
     db.session.commit()
-
-    return redirect(url_for('index'))
+    return jsonify({'message': 'User registered successfully'}) if is_api_request else redirect(url_for('index'))
 
 @app.route('/login', methods=['POST'])
 def login():
