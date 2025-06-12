@@ -42,7 +42,7 @@ function Profile() {
       <h1>User Profile</h1>
       <p><strong>Username:</strong> {user.username}</p>
       {user.email && <p><strong>Email:</strong> {user.email}</p>}
-      
+
       {/* Link to the edit profile page */}
       <Link to="/edit-profile">Edit Profile</Link>
     </div>
