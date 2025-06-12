@@ -28,7 +28,7 @@ function FamilyMemberDetail() {
  
     fetchFamilyMember();
   }, [memberId]); // Dependency array includes memberId to refetch if it changes
- 
+
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this family member?')) {
       try {
