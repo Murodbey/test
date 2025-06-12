@@ -21,7 +21,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
- set setLoading(true);
+    setLoading(true);
 
     try {
       const response = await fetch(`${BASE_URL}/login`, { // Assuming '/login' is your API endpoint
@@ -43,7 +43,7 @@ function Login() {
 
       login(userData);
       navigate('/dashboard'); // Navigate to dashboard on successful login
- setLoading(false);
+      setLoading(false);
 
     } catch (error) {
       setError(error.message);
