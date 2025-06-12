@@ -21,8 +21,6 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
 
     try {
       const response = await fetch(`${BASE_URL}/login`, { // Assuming '/login' is your API endpoint
@@ -42,12 +40,11 @@ function Login() {
       const userData = await response.json(); // You might receive user info or a token here      
       console.log('Login successful:', userData); // Placeholder for handling login success
 
-      setLoading(false);
+      login(userData);
       navigate('/dashboard'); // Navigate to dashboard on successful login
 
     } catch (error) {
       setError(error.message);
-      setLoading(false);
     }
   };
 

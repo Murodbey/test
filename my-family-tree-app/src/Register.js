@@ -19,7 +19,6 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
 
     try {
@@ -37,7 +36,6 @@ function Register() {
       }
 
       // Assuming successful registration redirects to login
-      setLoading(false);
       navigate('/login');
 
     } catch (error) {

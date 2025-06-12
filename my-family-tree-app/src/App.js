@@ -1,7 +1,7 @@
 import './App.css';
-import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Profile from '/Users/murodbey/Documents/test/my-family-tree-app/src/Profile';// Use full path
-import EditProfile from './EditProfile'; // Import EditProfile
+import EditProfile from '/Users/murodbey/Documents/test/my-family-tree-app/src/EditProfile'; // Import EditProfile
 import FamilyMemberList from '/Users/murodbey/Documents/test/my-family-tree-app/src/FamilyMemberList';
 import FamilyMemberDetail from '/Users/murodbey/Documents/test/my-family-tree-app/src/FamilyMemberDetail';
 import AddFamilyMember from '/Users/murodbey/Documents/test/my-family-tree-app/src/AddFamilyMember';

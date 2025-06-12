@@ -3,19 +3,33 @@ import React, { createContext, useState } from 'react';
 const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Or useState(localStorage.getItem('token')) if you store token
+  // Initialize state from local storage
+  const [user, setUser] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem('user');
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Failed to parse user from localStorage:", error);
+      return null;
+    }
+  });
 
   const login = (userData) => {
-    // In a real app, you'd likely store a token here
     setUser(userData);
-    // Optional: store token/user data in local storage
-    // localStorage.setItem('user', JSON.stringify(userData));
+    try {
+      localStorage.setItem('user', JSON.stringify(userData));
+    } catch (error) {
+      console.error("Failed to store user in localStorage:", error);
+    }
   };
 
   const logout = () => {
     setUser(null);
-    // Optional: remove token/user data from local storage
-    // localStorage.removeItem('user');
+    try {
+      localStorage.removeItem('user');
+    } catch (error) {
+      console.error("Failed to remove user from localStorage:", error);
+    }
   };
 
   return (
