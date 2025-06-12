@@ -217,9 +217,9 @@ def view_member(member_id):
             other_member = FamilyMember.query.get(relationship.member1_id)
             if other_member:
                 if relationship.relationship_type.lower() == 'parent':
-                    if other_member.gender == 'Female':
-                        mothers.append({'member': other_member, 'relationship_id': relationship.id})
- elif other_member.gender == 'Male':
+ if other_member.gender == 'Female':
+ mothers.append({'member': other_member, 'relationship_id': relationship.id})
+                elif other_member.gender == 'Male':
  fathers.append({'member': other_member, 'relationship_id': relationship.id})
                 elif relationship.relationship_type.lower() == 'spouse':
                     spouses.append({'member': other_member, 'relationship_id': relationship.id})
@@ -293,10 +293,7 @@ def member_api(member_id):
 
     if request.method == 'GET':
         # Re-use the logic from view_member but return JSON
-
-        # Handle photo update if needed (requires more complex logic for file uploads via API)
-        db.session.commit()
-        return jsonify({'message': 'Family member updated successfully'}), 200
+ return jsonify({
     elif request.method == 'PUT':
         data = request.json
         family_member.name = data.get('name', family_member.name)
