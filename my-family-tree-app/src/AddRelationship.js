@@ -77,7 +77,7 @@ function AddRelationship() {
   return (
     <div className="add-relationship-container"> {/* Add a class for potential styling */}
       <h1>Add New Relationship</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="family-member-form">
         <div>
           <label htmlFor="member1_id">Member 1:</label>
           <select

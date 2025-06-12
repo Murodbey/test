@@ -100,3 +100,19 @@
   cursor: not-allowed;
 }
 
+.relationship-section {
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+}
+
+.relationship-section h3 {
+  margin-bottom: 10px;
+}
+
+.relationship-item {
+  margin-bottom: 8px;
+  padding: 5px;
+  background-color: #f9f9f9;
+}
+

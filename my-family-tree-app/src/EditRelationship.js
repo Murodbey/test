@@ -95,7 +95,7 @@ function EditRelationship() {
 
   return (
     <div>
-      <h1>Edit Relationship</h1>
+      <h2>Edit Relationship</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="member1_id">Member 1:</label>

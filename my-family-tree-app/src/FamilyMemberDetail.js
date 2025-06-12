@@ -8,22 +8,23 @@ function FamilyMemberDetail() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
  
-  useEffect(() => {
-    const fetchFamilyMember = async () => {
-      try {
-        const response = await fetch(`/member/${memberId}`); // Corrected endpoint based on app.py routing
-        if (!response.ok) {
- throw new Error('Failed to fetch family member');
-        }
-        const data = await response.json();
-        setFamilyMember(data);
- setLoading(false);
-        setError(null); // Clear previous errors on successful fetch
-      } catch (error) {
-        setError(error.message);
-        setLoading(false); // Ensure loading is false after an error
- }
-    };
+  const fetchFamilyMember = async () => {
+    try { 
+      const response = await fetch(`/member/${memberId}`); // Corrected endpoint based on app.py routing
+      if (!response.ok) {
+        throw new Error('Failed to fetch family member');
+      }
+      const data = await response.json();
+      setFamilyMember(data);
+      setLoading(false);
+      setError(null); // Clear previous errors on successful fetch
+    } catch (error) {
+      setError(error.message);
+      setLoading(false); // Ensure loading is false after an error
+    }
+  };
+
+  useEffect(() => { 
  
     fetchFamilyMember();
   }, [memberId]); // Dependency array includes memberId to refetch if it changes
@@ -81,7 +82,7 @@ function FamilyMemberDetail() {
       <h1>{familyMember.name}</h1>
       {familyMember.photo && (
         <div className="family-member-photo">
-          <img src={familyMember.photo} alt={`${familyMember.name}'s photo`} style={{ maxWidth: '200px', height: 'auto' }} />
+          <img src={familyMember.photo} alt={`${familyMember.name}`} style={{ maxWidth: '200px', height: 'auto' }} />
  </div>
       )}
       <div>
@@ -99,8 +100,48 @@ function FamilyMemberDetail() {
         </div>
       )}
  
-      {/* Add more details as needed */}
-
+      {/* Display Relationships */}
+      {familyMember.mother && (
+ <div className="relationship-section">
+          <h3>Mother</h3>
+ <div className="relationship-item">
+ <Link to={`/family-members/${familyMember.mother.id}`}>{familyMember.mother.name}</Link>
+            {familyMember.relationships && familyMember.relationships.mother && (
+ <button onClick={() => handleDeleteRelationship(familyMember.relationships.mother.id)}>Delete</button>
+ )}
+ </div>
+ </div>
+ )}
+ {familyMember.father && (
+ <div className="relationship-section">
+          <h3>Father</h3>
+ <div className="relationship-item">
+ <Link to={`/family-members/${familyMember.father.id}`}>{familyMember.father.name}</Link>
+            {familyMember.relationships && familyMember.relationships.father && (
+ <button onClick={() => handleDeleteRelationship(familyMember.relationships.father.id)}>Delete</button>
+ )}
+ </div>
+ </div>
+ )}
+      {familyMember.spouses && familyMember.spouses.length > 0 && (
+ <div className="relationship-section">
+          <h3>Spouses</h3>
+          {familyMember.spouses.map(spouse => (
+ <div key={spouse.id} className="relationship-item">
+ <Link to={`/family-members/${spouse.id}`}>{spouse.name}</Link>
+ <button onClick={() => handleDeleteRelationship(spouse.relationship_id)}>Delete</button>
+ </div>
+ ))}
+ </div>
+ )}
+      {familyMember.children && familyMember.children.length > 0 && (
+ <div className="relationship-section">
+          <h3>Children</h3>
+          {familyMember.children.map(child => (
+ <div key={child.id} className="relationship-item"><Link to={`/family-members/${child.id}`}>{child.name}</Link></div>
+ ))}
+ </div>
+ )}
       <Link to={`/edit-family-member/${familyMember.id}`}>Edit Member</Link>
       <button onClick={handleDelete}>Delete Member</button>
       {/* You might want to add links to view relationships here later */}
