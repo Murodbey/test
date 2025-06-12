@@ -93,14 +93,22 @@ def register():
 
 @app.route('/login', methods=['POST'])
 def login():
-    username = request.form['username']
-    password = request.form['password']
+    # Check if the request is an API request based on Accept header
+    is_api_request = 'application/json' in request.headers.get('Accept', '')
+
+    data = request.get_json() if is_api_request else request.form
+    username = data['username']
+    password = data['password']
     user = User.query.filter_by(username=username).first()
 
     if user and check_password_hash(user.password, password):
         session['user_id'] = user.id
+        if is_api_request:
+            return jsonify({'message': 'Login successful', 'user_id': user.id}), 200
         return redirect(url_for('dashboard'))
     else:
+        if is_api_request:
+            return jsonify({'message': 'Invalid credentials'}), 401
         return redirect(url_for('index'))
 
 @app.route('/api/members', methods=['POST']) # New API endpoint
