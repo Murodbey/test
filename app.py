@@ -216,10 +216,10 @@ def view_member(member_id):
         elif relationship.member2_id == member_id:
             other_member = FamilyMember.query.get(relationship.member1_id)
             if other_member:
-                if relationship.relationship_type.lower() == 'parent':
+ if relationship.relationship_type.lower() == 'parent':
  if other_member.gender == 'Female':
  mothers.append({'member': other_member, 'relationship_id': relationship.id})
-                elif other_member.gender == 'Male':
+ elif other_member.gender == 'Male':
  fathers.append({'member': other_member, 'relationship_id': relationship.id})
                 elif relationship.relationship_type.lower() == 'spouse':
                     spouses.append({'member': other_member, 'relationship_id': relationship.id})
