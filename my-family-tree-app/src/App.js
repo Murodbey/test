@@ -3,7 +3,6 @@ import './App.css';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Profile from './Profile';// Use full path
 import EditProfile from '.\/EditProfile'; // Import EditProfile
-import FamilyTree from './FamilyTree'; // Assuming you'll create this component later
 
 function App() {
   return (
